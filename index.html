@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Halo Robotics — Asset & CrewOps</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#090910;--bg2:#111119;--bg3:#1a1a26;--bg4:#22222f;
+  --border:#252533;--border2:#32324a;
+  --text:#eeeef8;--text2:#9090b0;--text3:#55556a;
+  --accent:#7c6ef5;--accent2:#a89bff;--glow:rgba(124,110,245,.2);
+  --green:#22c55e;--gbg:rgba(34,197,94,.1);
+  --red:#ef4444;--rbg:rgba(239,68,68,.1);
+  --amber:#f59e0b;--abg:rgba(245,158,11,.1);
+  --blue:#3b82f6;--bbg:rgba(59,130,246,.1);
+  --fd:'Syne',sans-serif;--fb:'DM Sans',sans-serif;--fm:'DM Mono',monospace;
+  --r:10px;--rl:16px;
+}
+body{font-family:var(--fb);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ══ LOGIN ══════════════════════════════════════════════════ */
+#login-page{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  background:radial-gradient(ellipse at 70% 20%, rgba(124,110,245,.12) 0%, transparent 60%),
+             radial-gradient(ellipse at 20% 80%, rgba(34,197,94,.06) 0%, transparent 50%),
+             var(--bg);
+}
+
+/* Grid pattern background */
+#login-page::before{
+  content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(124,110,245,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,110,245,.04) 1px, transparent 1px);
+  background-size:40px 40px;pointer-events:none;
+}
+
+.login-wrap{
+  width:420px;max-width:calc(100vw - 32px);
+  position:relative;z-index:1;
+}
+
+/* Logo area */
+.login-logo-area{text-align:center;margin-bottom:32px}
+.login-logo-img{
+  width:64px;height:64px;margin:0 auto 12px;
+  border-radius:16px;overflow:hidden;
+  background:var(--bg2);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+}
+.login-logo-img img{width:100%;height:100%;object-fit:contain;padding:8px}
+.login-brand{font-family:var(--fd);font-size:22px;font-weight:700;letter-spacing:-.5px}
+.login-sub{font-size:12px;color:var(--text3);margin-top:4px;letter-spacing:.05em;text-transform:uppercase}
+
+.login-card{
+  background:rgba(17,17,25,.8);
+  border:1px solid var(--border);
+  border-radius:20px;padding:32px;
+  backdrop-filter:blur(20px);
+  box-shadow:0 32px 80px rgba(0,0,0,.6),0 0 0 1px rgba(124,110,245,.08);
+}
+
+.tabs{display:flex;gap:4px;background:var(--bg3);border-radius:var(--r);padding:4px;margin-bottom:24px}
+.tab{flex:1;padding:8px;border-radius:7px;border:none;background:transparent;color:var(--text3);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .2s}
+.tab.active{background:var(--bg4);color:var(--text);box-shadow:0 2px 6px rgba(0,0,0,.3)}
+
+.fg{margin-bottom:14px}
+.fl{font-size:11px;font-weight:600;color:var(--text3);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.05em}
+.fi{width:100%;padding:10px 14px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--bg3);color:var(--text);font-size:13px;font-family:var(--fb);outline:none;transition:border-color .2s,box-shadow .2s}
+.fi:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow)}
+.fi::placeholder{color:var(--text3)}
+
+.btn-primary{
+  width:100%;padding:12px;border-radius:var(--r);border:none;
+  background:linear-gradient(135deg,var(--accent) 0%,#9b8af8 100%);
+  color:#fff;font-size:14px;font-weight:700;cursor:pointer;
+  font-family:var(--fb);transition:all .2s;letter-spacing:.02em;margin-top:4px;
+  box-shadow:0 4px 20px var(--glow);
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 28px var(--glow)}
+.btn-primary:active{transform:none}
+
+.msg{padding:10px 14px;border-radius:var(--r);font-size:12px;font-weight:500;margin-bottom:14px;display:none}
+.msg-err{background:var(--rbg);border:1px solid rgba(239,68,68,.25);color:var(--red)}
+.msg-ok{background:var(--gbg);border:1px solid rgba(34,197,94,.25);color:var(--green)}
+
+/* ══ APP ════════════════════════════════════════════════════ */
+#app{display:none;min-height:100vh;flex-direction:column}
+#app.on{display:flex}
+
+/* TOPBAR */
+.tb{
+  height:54px;background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 20px;gap:14px;
+  position:sticky;top:0;z-index:100;flex-shrink:0;
+}
+.tb-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.tb-logo-img{
+  width:32px;height:32px;border-radius:9px;overflow:hidden;
+  background:var(--bg3);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.tb-logo-img img{width:100%;height:100%;object-fit:contain;padding:4px}
+.tb-logo-name{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--text)}
+.tb-logo-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.sync-txt{font-size:11px;font-weight:600;color:var(--green)}
+.tb-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.uc{display:flex;align-items:center;gap:8px;padding:5px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--text2);cursor:default}
+.ua{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#a78bfa);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+.tbtn{padding:6px 14px;border-radius:var(--r);border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .15s}
+.tbtn:hover{background:var(--bg3);color:var(--text)}
+.tbtn-a{background:var(--accent);border-color:var(--accent);color:#fff}
+.tbtn-a:hover{opacity:.9;color:#fff}
+
+/* LAYOUT */
+.app-body{display:flex;flex:1;overflow:hidden;height:calc(100vh - 54px)}
+
+/* SIDEBAR */
+.sb{width:210px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:12px 10px;gap:3px;overflow-y:auto}
+.sb-lbl{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;padding:8px 8px 4px;margin-top:6px}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--r);cursor:pointer;font-size:12px;font-weight:500;color:var(--text2);border:none;background:none;width:100%;text-align:left;transition:all .15s}
+.ni:hover{background:var(--bg3);color:var(--text)}
+.ni.on{background:var(--glow);color:var(--accent2);border:1px solid rgba(124,110,245,.18)}
+.ni svg{width:15px;height:15px;flex-shrink:0;opacity:.6}
+.ni.on svg{opacity:1}
+.sb-divider{height:1px;background:var(--border);margin:6px 0}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;background:var(--bg)}
+
+/* PAGE */
+.page{padding:20px;display:none}
+.page.on{display:block}
+
+/* PAGE HEADER */
+.ph{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.ph-title{font-family:var(--fd);font-size:20px;font-weight:700;letter-spacing:-.3px}
+.ph-sub{font-size:12px;color:var(--text3);margin-top:2px}
+
+/* KPI */
+.kpi{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px}
+@media(max-width:1100px){.kpi{grid-template-columns:repeat(3,1fr)}}
+.kc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:14px 16px;transition:border-color .2s,transform .15s;cursor:default;position:relative;overflow:hidden}
+.kc:hover{border-color:var(--border2);transform:translateY(-2px)}
+.kc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kc.blue::before{background:var(--blue)}.kc.green::before{background:var(--green)}.kc.amber::before{background:var(--amber)}.kc.red::before{background:var(--red)}.kc.purple::before{background:var(--accent)}
+.kc-l{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+.kc-v{font-family:var(--fd);font-size:26px;font-weight:700;line-height:1}
+.kc-s{font-size:11px;color:var(--text3);margin-top:4px}
+.kc-v.g{color:var(--green)}.kc-v.r{color:var(--red)}.kc-v.a{color:var(--amber)}.kc-v.b{color:var(--blue)}.kc-v.p{color:var(--accent2)}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:16px}
+.ch{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.ct{font-family:var(--fd);font-size:14px;font-weight:700}
+.fc{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:4px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .15s}
+.chip:hover{background:var(--bg3);color:var(--text)}
+.chip.on{background:var(--glow);color:var(--accent2);border-color:rgba(124,110,245,.25)}
+
+/* SEARCH */
+.sr{display:flex;gap:8px;padding:12px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.si{flex:1;min-width:180px;padding:8px 12px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--bg3);color:var(--text);font-size:12px;font-family:var(--fb);outline:none;transition:border-color .2s}
+.si:focus{border-color:var(--accent)}
+.si::placeholder{color:var(--text3)}
+
+/* ASSET GRID (Card style) */
+.ag{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;padding:16px 18px}
+.ac{
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--rl);
+  overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s,box-shadow .2s;
+  display:flex;flex-direction:column;
+}
+.ac:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.ac-img{
+  height:140px;background:var(--bg4);position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.ac-img img{width:100%;height:100%;object-fit:contain;padding:12px;transition:transform .3s}
+.ac:hover .ac-img img{transform:scale(1.05)}
+.ac-img-placeholder{font-size:48px;opacity:.3}
+.ac-status-dot{
+  position:absolute;top:10px;right:10px;width:8px;height:8px;border-radius:50%;
+  box-shadow:0 0 0 2px var(--bg4);
+}
+.ac-body{padding:12px 14px;flex:1;display:flex;flex-direction:column;gap:6px}
+.ac-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.3}
+.ac-code{font-family:var(--fm);font-size:10px;color:var(--text3)}
+.ac-tags{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.ac-loc{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:4px;margin-top:auto;padding-top:6px}
+
+/* BADGES */
+.bd{display:inline-flex;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;white-space:nowrap}
+.bd-g{background:var(--gbg);color:var(--green)}
+.bd-r{background:var(--rbg);color:var(--red)}
+.bd-a{background:var(--abg);color:var(--amber)}
+.bd-b{background:var(--bbg);color:var(--blue)}
+.bd-p{background:var(--glow);color:var(--accent2)}
+.bd-x{background:rgba(255,255,255,.05);color:var(--text2)}
+
+/* DETAIL PANEL */
+.dp{
+  position:fixed;top:54px;right:0;width:420px;height:calc(100vh - 54px);
+  background:var(--bg2);border-left:1px solid var(--border);
+  transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+  z-index:50;overflow-y:auto;display:flex;flex-direction:column;
+}
+.dp.on{transform:translateX(0)}
+.dp-hd{
+  display:flex;align-items:flex-start;gap:12px;padding:18px;
+  border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:1;
+}
+.dp-img{
+  width:80px;height:80px;border-radius:var(--rl);background:var(--bg3);
+  border:1px solid var(--border);overflow:hidden;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.dp-img img{width:100%;height:100%;object-fit:contain;padding:8px}
+.dp-img-ph{font-size:32px;opacity:.4}
+.dp-info{flex:1;min-width:0}
+.dp-name{font-family:var(--fd);font-size:15px;font-weight:700;margin-bottom:4px}
+.dp-code{font-family:var(--fm);font-size:11px;color:var(--text3);margin-bottom:6px}
+.dp-close{
+  width:28px;height:28px;border-radius:7px;border:1px solid var(--border);
+  background:transparent;color:var(--text3);cursor:pointer;display:flex;
+  align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-left:auto;
+}
+.dp-body{padding:18px;flex:1}
+.dp-sec{margin-bottom:18px}
+.dp-sec-t{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.dp-sec-t::after{content:'';flex:1;height:1px;background:var(--border)}
+.dp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dp-f .dl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.dp-f .dv{font-size:12px;font-weight:500;color:var(--text)}
+.dp-f .dv.em{color:var(--text3);font-style:italic}
+.dp-doc-link{
+  display:flex;align-items:center;gap:8px;padding:9px 12px;
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);
+  color:var(--accent2);text-decoration:none;font-size:12px;font-weight:600;
+  transition:border-color .15s;margin-bottom:8px;
+}
+.dp-doc-link:hover{border-color:var(--border2)}
+
+/* CREW */
+.crew-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;padding:16px 18px}
+.cc{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rl);padding:16px;transition:border-color .2s}
+.cc:hover{border-color:var(--border2)}
+.cc-av{width:40px;height:40px;border-radius:12px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:16px;font-weight:700}
+.cc-name{font-size:13px;font-weight:700;margin-bottom:2px}
+.cc-team{font-size:11px;color:var(--text3);margin-bottom:8px}
+.cc-bds{display:flex;flex-wrap:wrap;gap:3px}
+
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.mo.on{opacity:1;pointer-events:all}
+.md{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:26px;width:500px;max-width:calc(100vw - 32px);max-height:85vh;overflow-y:auto;transform:translateY(16px);transition:transform .2s}
+.mo.on .md{transform:translateY(0)}
+.md-title{font-family:var(--fd);font-size:17px;font-weight:700;margin-bottom:4px}
+.md-sub{font-size:12px;color:var(--text2);margin-bottom:20px}
+.md-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:18px;border-top:1px solid var(--border)}
+.btn-cancel{padding:8px 16px;border-radius:var(--r);border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--fb)}
+.btn-cancel:hover{background:var(--bg3)}
+.btn-save{padding:8px 18px;border-radius:var(--r);border:none;background:linear-gradient(135deg,var(--accent),#9b8af8);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--fb)}
+.btn-save:hover{opacity:.9}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fs{width:100%;padding:9px 12px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--bg3);color:var(--text);font-size:12px;font-family:var(--fb);outline:none;transition:border-color .2s}
+.fs:focus{border-color:var(--accent)}
+.fsec{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--border)}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:10px 20px;border-radius:12px;font-size:13px;font-weight:600;z-index:9999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 32px rgba(0,0,0,.5);pointer-events:none;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.g{background:var(--gbg);border-color:rgba(34,197,94,.25);color:var(--green)}
+.toast.r{background:var(--rbg);border-color:rgba(239,68,68,.25);color:var(--red)}
+
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* VIEW TOGGLE */
+.view-toggle{display:flex;gap:4px;background:var(--bg3);border-radius:8px;padding:3px}
+.vt-btn{padding:5px 10px;border-radius:6px;border:none;background:transparent;color:var(--text3);font-size:12px;cursor:pointer;transition:all .15s}
+.vt-btn.on{background:var(--bg4);color:var(--text)}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ════════════════════════════════════════════════ -->
+<div id="login-page">
+  <div class="login-wrap">
+    <div class="login-logo-area">
+      <div class="login-logo-img">
+        <img src="https://i0.wp.com/halorobotics.com/wp-content/uploads/2024/03/cropped-Halo-Robotics-Logo-Type-1-1.png?fit=270%2C270&ssl=1" alt="Halo Robotics"
+          onerror="this.style.display='none';this.parentElement.innerHTML='🚁'">
+      </div>
+      <div class="login-brand">Halo Robotics Ops</div>
+      <div class="login-sub">Asset & CrewOps Platform</div>
+    </div>
+
+    <div class="login-card">
+      <div class="tabs">
+        <button class="tab active" onclick="stab('login')">Masuk</button>
+        <button class="tab" onclick="stab('reg')">Daftar</button>
+      </div>
+
+      <div id="lf">
+        <div class="msg msg-err" id="lerr"></div>
+        <div class="fg"><label class="fl">Email</label><input class="fi" id="le" type="email" placeholder="nama@halo-robotics.com"></div>
+        <div class="fg"><label class="fl">Kata Sandi</label><input class="fi" id="lp" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+        <button class="btn-primary" onclick="doLogin()">Masuk ke Dashboard</button>
+        <div style="text-align:center;margin-top:12px;font-size:12px;color:var(--text3)">Belum punya akun? <a href="#" onclick="stab('reg')" style="color:var(--accent2)">Daftar sekarang</a></div>
+      </div>
+
+      <div id="rf" style="display:none">
+        <div class="msg msg-err" id="rerr"></div>
+        <div class="msg msg-ok" id="rok"></div>
+        <div class="fg"><label class="fl">Nama Lengkap</label><input class="fi" id="rn" placeholder="Nama lengkap kamu"></div>
+        <div class="fg"><label class="fl">Email Kantor</label><input class="fi" id="re" type="email" placeholder="nama@halo-robotics.com"></div>
+        <div class="fg"><label class="fl">Kata Sandi</label><input class="fi" id="rp" type="password" placeholder="Min. 6 karakter"></div>
+        <button class="btn-primary" onclick="doReg()">Buat Akun</button>
+        <div style="text-align:center;margin-top:12px;font-size:12px;color:var(--text3)">Sudah punya akun? <a href="#" onclick="stab('login')" style="color:var(--accent2)">Masuk di sini</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APP ════════════════════════════════════════════════ -->
+<div id="app">
+  <div class="tb">
+    <div class="tb-logo">
+      <div class="tb-logo-img">
+        <img src="https://i0.wp.com/halorobotics.com/wp-content/uploads/2024/03/cropped-Halo-Robotics-Logo-Type-1-1.png?fit=270%2C270&ssl=1" alt="HR"
+          onerror="this.style.display='none';this.parentElement.innerHTML='🚁'">
+      </div>
+      <span class="tb-logo-name">Halo Robotics Ops</span>
+    </div>
+    <div class="tb-logo-dot"></div>
+    <span class="sync-txt" id="sync-txt">Memuat...</span>
+    <div class="tb-right">
+      <div class="view-toggle">
+        <button class="vt-btn on" id="vt-grid" onclick="setView('grid')">⊞ Grid</button>
+        <button class="vt-btn" id="vt-list" onclick="setView('list')">≡ List</button>
+      </div>
+      <button class="tbtn" onclick="openM('ma')">+ Tambah Aset</button>
+      <button class="tbtn tbtn-a" onclick="exportCSV()">Export CSV</button>
+      <div class="uc"><div class="ua" id="uav">?</div><span id="uname">—</span></div>
+      <button class="tbtn" onclick="doLogout()">Keluar</button>
+    </div>
+  </div>
+
+  <div class="app-body">
+    <div class="sb">
+      <div class="sb-lbl">Menu</div>
+      <button class="ni on" onclick="navTo('inv')" id="n-inv">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Inventaris Aset
+      </button>
+      <button class="ni" onclick="navTo('crew')" id="n-crew">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Kalender & Personil
+      </button>
+
+      <div class="sb-divider"></div>
+      <div class="sb-lbl">Filter Tim</div>
+      <button class="ni on" onclick="ft('')" id="ft-">Semua Tim</button>
+      <button class="ni" onclick="ft('Security & ICT')" id="ft-s">🔐 Security & ICT</button>
+      <button class="ni" onclick="ft('Mapping')" id="ft-m">🗺️ Mapping</button>
+      <button class="ni" onclick="ft('Inspection')" id="ft-i">🔍 Inspection</button>
+      <button class="ni" onclick="ft('Delivery')" id="ft-d">📦 Delivery</button>
+      <button class="ni" onclick="ft('Spraying')" id="ft-sp">🌿 Spraying</button>
+      <button class="ni" onclick="ft('Projects')" id="ft-p">🚀 Projects</button>
+      <button class="ni" onclick="ft('Training')" id="ft-t">🎓 Training</button>
+
+      <div class="sb-divider"></div>
+      <div class="sb-lbl">Filter Section</div>
+      <button class="ni" onclick="fs('Drone Unit - New')" id="fs-dn">🚁 Drone Baru</button>
+      <button class="ni" onclick="fs('Dock')" id="fs-dk">🏠 Dock</button>
+      <button class="ni" onclick="fs('Battery - New')" id="fs-bt">🔋 Battery</button>
+      <button class="ni" onclick="fs('Camera/Sensor/Payload')" id="fs-cm">📷 Camera</button>
+      <button class="ni" onclick="fs('GNSS')" id="fs-gn">📡 GNSS</button>
+      <button class="ni" onclick="fs('Wasted Out')" id="fs-wo">⚠️ Wasted Out</button>
+    </div>
+
+    <div class="main">
+      <!-- INVENTARIS -->
+      <div class="page on" id="p-inv">
+        <div class="ph">
+          <div>
+            <div class="ph-title">Inventaris Aset Operasional</div>
+            <div class="ph-sub">Data dari Google Sheet · <span id="data-src">memuat...</span></div>
+          </div>
+          <button class="tbtn" onclick="loadData()" id="ref-btn">↻ Refresh</button>
+        </div>
+
+        <div class="kpi">
+          <div class="kc purple"><div class="kc-l">Total Aset</div><div class="kc-v p" id="k-total">—</div><div class="kc-s" id="k-cat">—</div></div>
+          <div class="kc blue"><div class="kc-l">Di Kantor</div><div class="kc-v b" id="k-off">—</div><div class="kc-s">Standby ready</div></div>
+          <div class="kc amber"><div class="kc-l">Di Site</div><div class="kc-v a" id="k-site">—</div><div class="kc-s">Aktif beroperasi</div></div>
+          <div class="kc green"><div class="kc-l">Kondisi Sehat</div><div class="kc-v g" id="k-good">—</div><div class="kc-s">Siap digunakan</div></div>
+          <div class="kc red"><div class="kc-l">Maintenance</div><div class="kc-v r" id="k-maint">—</div><div class="kc-s">Perlu perhatian</div></div>
+        </div>
+
+        <div class="card">
+          <div class="ch">
+            <div class="ct">Daftar Aset</div>
+            <div class="fc">
+              <button class="chip on" onclick="sf('',this)">Semua</button>
+              <button class="chip" onclick="sf('office',this)">📍 Di Kantor</button>
+              <button class="chip" onclick="sf('site',this)">🛫 Di Site</button>
+              <button class="chip" onclick="sf('good',this)">✅ Sehat</button>
+              <button class="chip" onclick="sf('maint',this)">🔧 Maintenance</button>
+              <button class="chip" onclick="sf('ooc',this)">⛔ OOC</button>
+            </div>
+          </div>
+          <div class="sr">
+            <input class="si" id="si" placeholder="Cari nama, kode, lokasi, PIC, serial..." oninput="renderAssets()">
+          </div>
+          <div id="asset-wrap">
+            <div style="text-align:center;padding:3rem;color:var(--text3)"><span class="spin"></span>Memuat 660 asset dari Google Sheet...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CREW -->
+      <div class="page" id="p-crew">
+        <div class="ph">
+          <div>
+            <div class="ph-title">Kalender & Personil</div>
+            <div class="ph-sub">Direktori tim operasional Halo Robotics</div>
+          </div>
+          <button class="tbtn" onclick="openM('mc')">+ Tambah Personil</button>
+        </div>
+        <div class="card">
+          <div class="ch">
+            <div class="ct">Direktori Personil</div>
+            <div class="fc">
+              <button class="chip on" onclick="scf('',this)">Semua</button>
+              <button class="chip" onclick="scf('ready',this)">✅ Tersedia</button>
+              <button class="chip" onclick="scf('duty',this)">🛫 Bertugas</button>
+              <button class="chip" onclick="scf('off',this)">💤 Cuti/Off</button>
+            </div>
+          </div>
+          <div id="crew-wrap" class="crew-grid">
+            <div style="text-align:center;padding:2rem;color:var(--text3);grid-column:1/-1">Belum ada personil. Klik "+ Tambah Personil"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL PANEL -->
+<div class="dp" id="dp">
+  <div class="dp-hd">
+    <div class="dp-img"><img id="dp-img" src="" alt="" onerror="this.style.display='none';document.getElementById('dp-img-ph').style.display='flex'"><div class="dp-img-ph" id="dp-img-ph" style="display:none">🚁</div></div>
+    <div class="dp-info">
+      <div class="dp-name" id="dp-n">—</div>
+      <div class="dp-code" id="dp-c">—</div>
+      <div id="dp-badges" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+    </div>
+    <button class="dp-close" onclick="closeDP()">✕</button>
+  </div>
+  <div class="dp-body" id="dp-body"></div>
+</div>
+
+<!-- MODAL TAMBAH ASET -->
+<div class="mo" id="ma">
+  <div class="md">
+    <div class="md-title">Tambah Unit Aset</div>
+    <div class="md-sub">Aset baru akan ditambahkan secara lokal. Sync ke sheet via Form Update.</div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Tipe/Section *</label>
+        <select class="fs" id="m-sec"><option>Drone Unit - New</option><option>Drone Unit - Old</option><option>Dock</option><option>Battery Dock</option><option>Battery - New</option><option>Charger - New</option><option>Camera/Sensor/Payload</option><option>GNSS</option><option>Laptops</option><option>Anti Drone</option><option>Supporting & Tools</option></select></div>
+      <div class="fg"><label class="fl">Health Status *</label>
+        <select class="fs" id="m-hs"><option>Good</option><option>Require Maintenance</option><option>Out of Commission</option><option>Demo Only</option></select></div>
+    </div>
+    <div class="fg"><label class="fl">Nama Unit *</label><input class="fi" id="m-nm" placeholder="Contoh: DJI Matrice 400 - Unit H"></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Internal Code</label><input class="fi" id="m-ic" placeholder="OS0090"></div>
+      <div class="fg"><label class="fl">Serial Number</label><input class="fi" id="m-sn" placeholder="SN..."></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Tim *</label>
+        <select class="fs" id="m-tm"><option>Security & ICT</option><option>Inspection</option><option>Mapping</option><option>Delivery</option><option>Spraying</option><option>Projects</option><option>Training</option><option>All Team</option></select></div>
+      <div class="fg"><label class="fl">PIC *</label><input class="fi" id="m-pc" placeholder="Nama PIC"></div>
+    </div>
+    <div class="fsec">Lokasi</div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Posisi *</label>
+        <select class="fs" id="m-pos"><option>Di Kantor (Ready)</option><option>Luar Kantor (Dipinjam)</option></select></div>
+      <div class="fg"><label class="fl">Lokasi *</label><input class="fi" id="m-lc" placeholder="Ranji, Office OPS..."></div>
+    </div>
+    <div class="md-footer">
+      <button class="btn-cancel" onclick="closeM('ma')">Batal</button>
+      <button class="btn-save" onclick="saveAsset()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TAMBAH PERSONIL -->
+<div class="mo" id="mc">
+  <div class="md">
+    <div class="md-title">Tambah Data Personil</div>
+    <div class="md-sub">Tambah anggota tim ke direktori personil</div>
+    <div class="fg"><label class="fl">Nama Lengkap *</label><input class="fi" id="cn" placeholder="Nama lengkap"></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Tim *</label>
+        <select class="fs" id="ct"><option>Inspection</option><option>Security & ICT</option><option>Mapping</option><option>Delivery</option><option>Spraying</option><option>Projects</option><option>Training</option></select></div>
+      <div class="fg"><label class="fl">Status *</label>
+        <select class="fs" id="cs"><option>Tersedia (Ready)</option><option>Sedang Bertugas</option><option>Cuti / Off</option></select></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">WhatsApp</label><input class="fi" id="cp" placeholder="08xx"></div>
+      <div class="fg"><label class="fl">Lokasi Base</label><input class="fi" id="cb" placeholder="Jakarta, Ranji..."></div>
+    </div>
+    <div class="fg"><label class="fl">Kompetensi / Lisensi (pisah koma)</label><input class="fi" id="ck" placeholder="DJI Certified, BVLOS, RPAS..."></div>
+    <div class="md-footer">
+      <button class="btn-cancel" onclick="closeM('mc')">Batal</button>
+      <button class="btn-save" onclick="saveCrew()">Simpan Personil</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────
+// Pakai sheet LAMA yang sudah ada 660 asset
+const SHEET_ID = '1XdTzyGl-Y96DZduM-vlEtczy3JNzS3cUO-6yuSWOKbE';
+
+// ── DRONE IMAGE MAP ───────────────────────────────────────────
+function getDroneImage(name, section) {
+  const n = (name||'').toLowerCase();
+  const s = (section||'').toLowerCase();
+
+  // Map keyword → Google Images search URL (langsung redirect ke gambar)
+  const map = [
+    ['matrice 400',    'https://store-cdn.dji.com/uploads/products/dji-matrice-4t/pictures/f31b8bd12fca9e5fccf3c0ca9e9af0cc.jpg'],
+    ['matrice 4t',     'https://store-cdn.dji.com/uploads/products/dji-matrice-4t/pictures/f31b8bd12fca9e5fccf3c0ca9e9af0cc.jpg'],
+    ['matrice 4e',     'https://store-cdn.dji.com/uploads/products/dji-matrice-4e/pictures/1.jpg'],
+    ['matrice 4d',     'https://store-cdn.dji.com/uploads/products/dji-matrice-4d/pictures/1.jpg'],
+    ['matrice 350',    'https://store-cdn.dji.com/uploads/products/dji-matrice-350-rtk/pictures/1.jpg'],
+    ['matrice 300',    'https://store-cdn.dji.com/uploads/products/matrice-300/pictures/1.jpg'],
+    ['matrice 30t',    'https://store-cdn.dji.com/uploads/products/dji-matrice-30-series/pictures/1.jpg'],
+    ['matrice 30',     'https://store-cdn.dji.com/uploads/products/dji-matrice-30-series/pictures/1.jpg'],
+    ['flycart 100',    'https://store-cdn.dji.com/uploads/products/dji-flycart-100/pictures/1.jpg'],
+    ['flycart 30',     'https://store-cdn.dji.com/uploads/products/dji-flycart-30/pictures/1.jpg'],
+    ['mavic 3',        'https://store-cdn.dji.com/uploads/products/dji-mavic-3-enterprise/pictures/1.jpg'],
+    ['agras t50',      'https://store-cdn.dji.com/uploads/products/dji-agras-t50/pictures/1.jpg'],
+    ['agras t40',      'https://store-cdn.dji.com/uploads/products/dji-agras-t40/pictures/1.jpg'],
+    ['agras t25',      'https://store-cdn.dji.com/uploads/products/dji-agras-t25/pictures/1.jpg'],
+    ['agras t20',      'https://store-cdn.dji.com/uploads/products/dji-agras-t20p/pictures/1.jpg'],
+    ['agras t10',      'https://store-cdn.dji.com/uploads/products/agras-t10/pictures/1.jpg'],
+    ['dock 3',         'https://store-cdn.dji.com/uploads/products/dji-dock-3/pictures/1.jpg'],
+    ['dock 2',         'https://store-cdn.dji.com/uploads/products/dji-dock-2/pictures/1.jpg'],
+    ['dock 1',         'https://store-cdn.dji.com/uploads/products/dji-dock/pictures/1.jpg'],
+    ['dock',           'https://store-cdn.dji.com/uploads/products/dji-dock-2/pictures/1.jpg'],
+    ['elios 3',        'https://www.flyability.com/wp-content/uploads/2022/09/Elios3_studio.png'],
+    ['elios 2',        'https://www.flyability.com/wp-content/uploads/2020/12/elios2.png'],
+    ['fifish',         'https://www.qysea.com/wp-content/uploads/2023/03/FIFISH-E-Go.jpg'],
+    ['autel',          'https://store-cdn.dji.com/uploads/products/dji-matrice-4t/pictures/f31b8bd12fca9e5fccf3c0ca9e9af0cc.jpg'],
+    ['emlid rs4',      'https://emlid.com/app/uploads/2023/11/RS4-hero.png'],
+    ['emlid rs3',      'https://emlid.com/app/uploads/2022/09/rs3.png'],
+    ['emlid rs2',      'https://emlid.com/app/uploads/2021/04/emlid-reach-rs2-plus.png'],
+    ['zenmuse h30',    'https://store-cdn.dji.com/uploads/products/dji-zenmuse-h30/pictures/1.jpg'],
+    ['zenmuse l3',     'https://store-cdn.dji.com/uploads/products/dji-zenmuse-l3/pictures/1.jpg'],
+    ['zenmuse l2',     'https://store-cdn.dji.com/uploads/products/dji-zenmuse-l2/pictures/1.jpg'],
+    ['zenmuse l1',     'https://store-cdn.dji.com/uploads/products/dji-zenmuse-l1/pictures/1.jpg'],
+    ['zenmuse p1',     'https://store-cdn.dji.com/uploads/products/dji-zenmuse-p1/pictures/1.jpg'],
+    ['zenmuse h20',    'https://store-cdn.dji.com/uploads/products/dji-zenmuse-h20/pictures/1.jpg'],
+    ['tb65',           'https://store-cdn.dji.com/uploads/products/tb65/pictures/1.jpg'],
+    ['tb100',          'https://store-cdn.dji.com/uploads/products/dji-matrice-4-series-battery/pictures/1.jpg'],
+    ['tb60',           'https://store-cdn.dji.com/uploads/products/intelligent-flight-battery-tb60/pictures/1.jpg'],
+    ['bs100',          'https://store-cdn.dji.com/uploads/products/bs65/pictures/1.jpg'],
+    ['d-rtk 3',        'https://store-cdn.dji.com/uploads/products/dji-d-rtk-3/pictures/1.jpg'],
+    ['d-rtk 2',        'https://store-cdn.dji.com/uploads/products/dji-d-rtk-2/pictures/1.jpg'],
+    ['drtk',           'https://store-cdn.dji.com/uploads/products/dji-d-rtk-3/pictures/1.jpg'],
+    ['skyfend',        'https://skyfend.com/wp-content/uploads/2023/02/Hunter-A800.png'],
+  ];
+
+  for (const [kw, url] of map) {
+    if (n.includes(kw)) return url;
+  }
+
+  // Fallback by section
+  if (s.includes('drone')) return 'https://store-cdn.dji.com/uploads/products/dji-matrice-350-rtk/pictures/1.jpg';
+  if (s.includes('dock'))  return 'https://store-cdn.dji.com/uploads/products/dji-dock-2/pictures/1.jpg';
+  if (s.includes('battery')) return 'https://store-cdn.dji.com/uploads/products/tb65/pictures/1.jpg';
+  if (s.includes('camera')||s.includes('payload')) return 'https://store-cdn.dji.com/uploads/products/dji-zenmuse-h30/pictures/1.jpg';
+  if (s.includes('gnss')) return 'https://emlid.com/app/uploads/2023/11/RS4-hero.png';
+  return null;
+}
+
+// ── STATE ─────────────────────────────────────────────────────
+let DATA=[], CREW=JSON.parse(localStorage.getItem('halo_crew')||'[]');
+let afilt='', tfilt='', sfilt='', cfilt='', viewMode='grid';
+
+// ── AUTH ──────────────────────────────────────────────────────
+function getUsers(){try{return JSON.parse(localStorage.getItem('halo_users')||'[]');}catch(e){return[];}}
+function saveUsers(u){localStorage.setItem('halo_users',JSON.stringify(u));}
+function stab(t){
+  document.getElementById('lf').style.display=t==='login'?'':'none';
+  document.getElementById('rf').style.display=t==='reg'?'':'none';
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',i===(t==='login'?0:1)));
+}
+function doLogin(){
+  const e=document.getElementById('le').value.trim(),p=document.getElementById('lp').value;
+  const err=document.getElementById('lerr');
+  if(!e||!p){err.textContent='Isi email dan kata sandi.';err.style.display='block';return;}
+  const u=getUsers().find(x=>x.email===e&&x.pass===p);
+  if(!u){err.textContent='Akses ditolak! Periksa kembali email dan kata sandi Anda.';err.style.display='block';return;}
+  err.style.display='none';
+  localStorage.setItem('halo_sess',JSON.stringify(u));
+  startApp(u);
+}
+function doReg(){
+  const n=document.getElementById('rn').value.trim(),e=document.getElementById('re').value.trim(),p=document.getElementById('rp').value;
+  const err=document.getElementById('rerr'),ok=document.getElementById('rok');
+  err.style.display='none';ok.style.display='none';
+  if(!n||!e||!p){err.textContent='Isi semua field.';err.style.display='block';return;}
+  if(p.length<6){err.textContent='Password min 6 karakter.';err.style.display='block';return;}
+  const users=getUsers();
+  if(users.find(x=>x.email===e)){err.textContent='Email sudah terdaftar.';err.style.display='block';return;}
+  users.push({name:n,email:e,pass:p});saveUsers(users);
+  ok.textContent='Akun berhasil dibuat! Silakan masuk.';ok.style.display='block';
+  setTimeout(()=>stab('login'),1500);
+}
+function doLogout(){
+  localStorage.removeItem('halo_sess');
+  document.getElementById('app').classList.remove('on');
+  document.getElementById('login-page').style.display='flex';
+}
+function startApp(u){
+  document.getElementById('login-page').style.display='none';
+  document.getElementById('app').classList.add('on');
+  document.getElementById('uname').textContent=u.name||u.email.split('@')[0];
+  document.getElementById('uav').textContent=(u.name||u.email)[0].toUpperCase();
+  loadData();renderCrew();
+}
+window.onload=()=>{
+  const s=localStorage.getItem('halo_sess');
+  if(s){try{startApp(JSON.parse(s));}catch(e){}}
+};
+
+// ── LOAD DATA (dari sheet LAMA 660 asset) ─────────────────────
+async function loadData(){
+  const rb=document.getElementById('ref-btn');
+  rb.innerHTML='<span class="spin"></span>Memuat...';rb.disabled=true;
+  try{
+    const res=await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Asset%20Master&t=${Date.now()}`);
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const text=await res.text();
+    DATA=parseCSV(text);
+    if(!DATA.length)throw new Error('Sheet kosong');
+    document.getElementById('sync-txt').textContent='Live · '+DATA.length+' asset';
+    document.getElementById('data-src').textContent='Google Sheet · '+DATA.length+' asset · '+new Date().toLocaleTimeString('id-ID');
+    updateKPI();renderAssets();
+    showToast('✓ '+DATA.length+' asset berhasil dimuat','g');
+  }catch(e){
+    document.getElementById('asset-wrap').innerHTML=`
+      <div style="text-align:center;padding:3rem;display:flex;flex-direction:column;align-items:center;gap:12px">
+        <div style="font-size:40px">⚠️</div>
+        <div style="font-family:var(--fd);font-size:16px;font-weight:700">Gagal Terhubung ke Database</div>
+        <div style="font-size:13px;color:var(--text3)">Pastikan sheet sudah di-publish (File → Share → Publish to web)</div>
+        <button class="tbtn" onclick="loadData()">Coba Lagi</button>
+      </div>`;
+  }
+  rb.innerHTML='↻ Refresh';rb.disabled=false;
+}
+
+function parseCSV(t){
+  const l=t.split('\n'),h=parseLine(l[0]),r=[];
+  for(let i=1;i<l.length;i++){
+    if(!l[i].trim())continue;const v=parseLine(l[i]);if(!v[2])continue;
+    const o={};h.forEach((k,j)=>o[cl(k)]=cl(v[j]||''));r.push(o);
+  }
+  return r;
+}
+function parseLine(l){
+  const r=[],re=/("(?:[^"]|"")*"|[^,]*)(,|$)/g;let m;
+  while((m=re.exec(l))!==null){r.push(m[1].startsWith('"')?m[1].slice(1,-1).replace(/""/g,'"'):m[1]);if(m[2]==='')break;}
+  return r;
+}
+function cl(v){return(v||'').replace(/^"|"$/g,'').trim();}
+function isOffice(d){const l=(d['Current Placement']||'').toLowerCase();return l.includes('office')||l.includes('ranji')||l.includes('kantor')||l.includes('obet');}
+
+// ── KPI ───────────────────────────────────────────────────────
+function updateKPI(){
+  const t=DATA.length,off=DATA.filter(d=>isOffice(d)).length;
+  const site=DATA.filter(d=>!isOffice(d)&&['Active','Project Use'].includes(d['Operational Status'])).length;
+  const good=DATA.filter(d=>d['Health Status']==='Good').length;
+  const maint=DATA.filter(d=>d['Health Status']==='Require Maintenance'||d['Health Status']==='Out of Commission').length;
+  document.getElementById('k-total').textContent=t;
+  document.getElementById('k-cat').textContent=[...new Set(DATA.map(d=>d.Section).filter(Boolean))].length+' kategori';
+  document.getElementById('k-off').textContent=off;
+  document.getElementById('k-site').textContent=site;
+  document.getElementById('k-good').textContent=good;
+  document.getElementById('k-maint').textContent=maint;
+}
+
+// ── FILTER ────────────────────────────────────────────────────
+function sf(f,btn){afilt=f;document.querySelectorAll('.fc .chip').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderAssets();}
+function ft(t){
+  tfilt=t;sfilt='';
+  document.querySelectorAll('[id^="ft-"],[id^="fs-"]').forEach(b=>b.classList.remove('on'));
+  document.getElementById('ft-'+t.replace(/[^a-z]/gi,'').toLowerCase().slice(0,1)||'').classList.add('on');
+  renderAssets();
+}
+function fs(s){
+  sfilt=s;tfilt='';
+  document.querySelectorAll('[id^="ft-"],[id^="fs-"]').forEach(b=>b.classList.remove('on'));
+  renderAssets();
+}
+function setView(v){
+  viewMode=v;
+  document.getElementById('vt-grid').classList.toggle('on',v==='grid');
+  document.getElementById('vt-list').classList.toggle('on',v==='list');
+  renderAssets();
+}
+
+function getFiltered(){
+  const q=(document.getElementById('si')?.value||'').toLowerCase();
+  return DATA.filter(d=>{
+    if(tfilt&&d.Team!==tfilt)return false;
+    if(sfilt&&d.Section!==sfilt)return false;
+    if(q&&!['Asset Name','Internal Code','Current Placement','PIC','Serial Number / License']
+       .some(k=>(d[k]||'').toLowerCase().includes(q)))return false;
+    const h=d['Health Status']||'';
+    if(afilt==='office'&&!isOffice(d))return false;
+    if(afilt==='site'&&isOffice(d))return false;
+    if(afilt==='good'&&h!=='Good')return false;
+    if(afilt==='maint'&&!h.includes('Require'))return false;
+    if(afilt==='ooc'&&!h.includes('Commission'))return false;
+    return true;
+  });
+}
+
+// ── RENDER ASSETS ─────────────────────────────────────────────
+function renderAssets(){
+  const filtered=getFiltered();
+  if(!filtered.length){
+    document.getElementById('asset-wrap').innerHTML='<div style="text-align:center;padding:3rem;color:var(--text3)">Tidak ada asset yang cocok.</div>';
+    return;
+  }
+  if(viewMode==='grid') renderGrid(filtered);
+  else renderTable(filtered);
+}
+
+function renderGrid(data){
+  const slice=data.slice(0,120);
+  const teamClr={'Security & ICT':'#7c6ef5','Mapping':'#22c55e','Inspection':'#f59e0b','Projects':'#3b82f6','Spraying':'#10b981','Delivery':'#ec4899','Training':'#94a3b8','All Team':'#94a3b8'};
+  const hBd=h=>{
+    if(!h)return'';
+    if(h==='Good')return`<span class="bd bd-g">Good</span>`;
+    if(h.includes('Out'))return`<span class="bd bd-r">OOC</span>`;
+    if(h.includes('Require'))return`<span class="bd bd-a">Req.Maint</span>`;
+    if(h==='Demo Only')return`<span class="bd bd-b">Demo</span>`;
+    return`<span class="bd bd-x">${esc(h)}</span>`;
+  };
+  const dotClr=d=>d['Health Status']==='Good'?'var(--green)':d['Health Status']?.includes('Out')?'var(--red)':'var(--amber)';
+
+  document.getElementById('asset-wrap').innerHTML = `<div class="ag">${slice.map(d=>{
+    const img=getDroneImage(d['Asset Name'],d.Section);
+    const tc=teamClr[d.Team]||'#94a3b8';
+    const dj=JSON.stringify(d).replace(/"/g,'&quot;');
+    return `<div class="ac" onclick="openDP(${dj})">
+      <div class="ac-img">
+        ${img?`<img src="${img}" alt="${esc(d['Asset Name'])}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:''}
+        <div class="ac-img-placeholder" style="display:${img?'none':'flex'}">${sectionIcon(d.Section)}</div>
+        <div class="ac-status-dot" style="background:${dotClr(d)}"></div>
+      </div>
+      <div class="ac-body">
+        <div class="ac-name">${esc(d['Asset Name'])}</div>
+        <div class="ac-code">${esc(d['Internal Code']||'—')}</div>
+        <div class="ac-tags">
+          <span class="bd bd-x" style="background:${tc}18;color:${tc}">${esc(d.Team||'—')}</span>
+          ${hBd(d['Health Status'])}
+        </div>
+        <div class="ac-loc">📍 ${esc(d['Current Placement']||'—')}</div>
+      </div>
+    </div>`;
+  }).join('')}</div>
+  ${data.length>120?`<div style="text-align:center;padding:12px 0 20px;font-size:12px;color:var(--text3)">Menampilkan 120 dari ${data.length} asset — gunakan filter/search untuk mempersempit</div>`:''}`;
+}
+
+function renderTable(data){
+  const slice=data.slice(0,200);
+  const hBd=h=>{
+    if(!h)return'<span class="bd bd-x">—</span>';
+    if(h==='Good')return`<span class="bd bd-g">${h}</span>`;
+    if(h.includes('Out'))return`<span class="bd bd-r">${h}</span>`;
+    if(h.includes('Require'))return`<span class="bd bd-a">Req.Maint</span>`;
+    return`<span class="bd bd-x">${esc(h)}</span>`;
+  };
+  document.getElementById('asset-wrap').innerHTML=`
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead><tr>
+        ${['Aset','Tim','PIC','Lokasi','Health','Maint'].map(h=>`<th style="padding:9px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;background:var(--bg2)">${h}</th>`).join('')}
+      </tr></thead>
+      <tbody>${slice.map(d=>{
+        const img=getDroneImage(d['Asset Name'],d.Section);
+        const dj=JSON.stringify(d).replace(/"/g,'&quot;');
+        return`<tr style="cursor:pointer" onclick="openDP(${dj})">
+          <td style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04)">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:28px;height:28px;border-radius:6px;background:var(--bg3);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center">
+                ${img?`<img src="${img}" style="width:100%;height:100%;object-fit:contain;padding:4px" onerror="this.style.display='none'">`:`<span style="font-size:14px">${sectionIcon(d.Section)}</span>`}
+              </div>
+              <div>
+                <div style="font-weight:600;color:var(--text)">${esc(d['Asset Name'])}</div>
+                <div style="font-family:var(--fm);font-size:10px;color:var(--text3)">${esc(d['Internal Code']||'—')}</div>
+              </div>
+            </div>
+          </td>
+          <td style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04)"><span class="bd bd-p">${esc(d.Team||'—')}</span></td>
+          <td style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text2)">${esc((d.PIC||'—').split(',')[0].trim())}</td>
+          <td style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04)"><span class="bd ${isOffice(d)?'bd-b':'bd-a'}">${isOffice(d)?'📍':'🛫'} ${esc(d['Current Placement']||'—')}</span></td>
+          <td style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04)">${hBd(d['Health Status'])}</td>
+          <td style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text3);font-size:11px">${esc(d['Next Maintenance']||'—')}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>
+    ${data.length>200?`<div style="text-align:center;padding:12px 0 20px;font-size:12px;color:var(--text3)">200 dari ${data.length}</div>`:''}`;
+}
+
+function sectionIcon(s){
+  const m={'Drone Unit':'🚁','Dock':'🏠','Battery':'🔋','Camera':'📷','GNSS':'📡','Laptop':'💻','Anti':'🛡️','Supporting':'🔧','Charger':'⚡','Wasted':'⚠️','Need':'🏷️','Archived':'📦'};
+  for(const[k,v]of Object.entries(m)){if((s||'').includes(k))return v;}
+  return '📦';
+}
+
+// ── DETAIL PANEL ──────────────────────────────────────────────
+function openDP(d){
+  const img=getDroneImage(d['Asset Name'],d.Section);
+  const imgEl=document.getElementById('dp-img');
+  const imgPh=document.getElementById('dp-img-ph');
+  if(img){imgEl.src=img;imgEl.style.display='';imgPh.style.display='none';}
+  else{imgEl.style.display='none';imgPh.style.display='flex';}
+
+  document.getElementById('dp-n').textContent=d['Asset Name']||'—';
+  document.getElementById('dp-c').textContent=(d['Internal Code']||'—')+' · '+(d.Section||'—');
+
+  const hc=d['Health Status']==='Good'?'var(--green)':d['Health Status']?.includes('Out')?'var(--red)':'var(--amber)';
+  document.getElementById('dp-badges').innerHTML=`
+    <span class="bd bd-p">${esc(d.Team||'—')}</span>
+    <span class="bd" style="background:${hc}18;color:${hc};font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px">${esc(d['Health Status']||'—')}</span>`;
+
+  document.getElementById('dp-body').innerHTML=`
+    <div class="dp-sec">
+      <div class="dp-sec-t">Info Utama</div>
+      <div class="dp-grid">
+        <div class="dp-f"><div class="dl">PIC</div><div class="dv">${esc(d.PIC?.split(',')[0]?.trim()||'—')}</div></div>
+        <div class="dp-f"><div class="dl">Ops Status</div><div class="dv">${esc(d['Operational Status']||'—')}</div></div>
+        <div class="dp-f"><div class="dl">Lokasi</div><div class="dv">${esc(d['Current Placement']||'—')}</div></div>
+        <div class="dp-f"><div class="dl">Jam Terbang</div><div class="dv">${esc(d['Hour / Cycle']||'0')}</div></div>
+        <div class="dp-f"><div class="dl">Next Maintenance</div><div class="dv">${esc(d['Next Maintenance']||'—')}</div></div>
+        <div class="dp-f"><div class="dl">Activation Date</div><div class="dv">${esc(d['Activation Date']||'—')}</div></div>
+      </div>
+    </div>
+    <div class="dp-sec">
+      <div class="dp-sec-t">Teknis</div>
+      <div class="dp-grid">
+        <div class="dp-f" style="grid-column:1/-1"><div class="dl">Serial Number</div><div class="dv ${d['Serial Number / License']?'':'em'}" style="font-family:var(--fm);font-size:11px">${esc(d['Serial Number / License']||'—')}</div></div>
+        <div class="dp-f"><div class="dl">Firmware</div><div class="dv ${d.Firmware?'':'em'}">${esc(d.Firmware||'—')}</div></div>
+        <div class="dp-f"><div class="dl">FCC Status</div><div class="dv">${esc(d['FCC Status']||'—')}</div></div>
+        <div class="dp-f"><div class="dl">Expired Date</div><div class="dv">${esc(d['Expired Date']||'—')}</div></div>
+        <div class="dp-f"><div class="dl">Item ID</div><div class="dv em" style="font-family:var(--fm);font-size:10px">${esc(d['Item ID']||'—')}</div></div>
+      </div>
+    </div>
+    ${d.Sertifikat||d['Maintenance Record Link']?`
+    <div class="dp-sec">
+      <div class="dp-sec-t">Dokumen</div>
+      ${d.Sertifikat?`<a class="dp-doc-link" href="${d.Sertifikat}" target="_blank">📄 Sertifikat Registrasi →</a>`:''}
+      ${d['Maintenance Record Link']?`<a class="dp-doc-link" href="${d['Maintenance Record Link']}" target="_blank">🔧 Maintenance Record →</a>`:''}
+    </div>`:''}`;
+
+  document.getElementById('dp').classList.add('on');
+}
+function closeDP(){document.getElementById('dp').classList.remove('on');}
+
+// ── CREW ──────────────────────────────────────────────────────
+function scf(f,btn){cfilt=f;document.querySelectorAll('#p-crew .fc .chip').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderCrew();}
+function renderCrew(){
+  const tc={'Inspection':'#f59e0b','Security & ICT':'#7c6ef5','Mapping':'#22c55e','Delivery':'#ec4899','Spraying':'#10b981','Projects':'#3b82f6','Training':'#94a3b8'};
+  const sm={'Tersedia (Ready)':{c:'var(--green)',bg:'var(--gbg)',l:'✅ Tersedia'},'Sedang Bertugas':{c:'var(--amber)',bg:'var(--abg)',l:'🛫 Bertugas'},'Cuti / Off':{c:'var(--text3)',bg:'rgba(255,255,255,.05)',l:'💤 Off'}};
+  let crew=CREW;
+  if(cfilt==='ready')crew=crew.filter(c=>c.status==='Tersedia (Ready)');
+  if(cfilt==='duty')crew=crew.filter(c=>c.status==='Sedang Bertugas');
+  if(cfilt==='off')crew=crew.filter(c=>c.status==='Cuti / Off');
+  if(!crew.length){document.getElementById('crew-wrap').innerHTML='<div style="text-align:center;padding:2rem;color:var(--text3);grid-column:1/-1">Tidak ada personil.</div>';return;}
+  const c=tc;
+  document.getElementById('crew-wrap').innerHTML=crew.map(x=>{
+    const st=sm[x.status]||sm['Tersedia (Ready)'];const col=c[x.team]||'#94a3b8';
+    const sk=(x.skills||'').split(',').map(s=>s.trim()).filter(Boolean);
+    return`<div class="cc">
+      <div class="cc-av" style="background:${col}20;color:${col}">${(x.name||'?')[0].toUpperCase()}</div>
+      <div class="cc-name">${esc(x.name)}</div>
+      <div class="cc-team">${esc(x.team)}${x.base?' · '+esc(x.base):''}</div>
+      <div style="margin-bottom:8px"><span class="bd" style="background:${st.bg};color:${st.c};font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px">${st.l}</span></div>
+      <div class="cc-bds">${sk.slice(0,4).map(s=>`<span class="bd bd-x" style="font-size:9px">${esc(s)}</span>`).join('')}</div>
+      ${x.phone?`<div style="font-size:11px;color:var(--text3);margin-top:8px">📱 ${esc(x.phone)}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function saveCrew(){
+  const n=document.getElementById('cn').value.trim();
+  if(!n){showToast('Isi nama lengkap','r');return;}
+  CREW.push({name:n,team:document.getElementById('ct').value,status:document.getElementById('cs').value,phone:document.getElementById('cp').value,base:document.getElementById('cb').value,skills:document.getElementById('ck').value});
+  localStorage.setItem('halo_crew',JSON.stringify(CREW));
+  closeM('mc');renderCrew();showToast('✓ Personil ditambahkan','g');
+  ['cn','cp','cb','ck'].forEach(id=>document.getElementById(id).value='');
+}
+
+function saveAsset(){
+  const n=document.getElementById('m-nm').value.trim();
+  if(!n){showToast('Isi nama aset','r');return;}
+  DATA.unshift({'Asset Name':n,'Section':document.getElementById('m-sec').value,'Health Status':document.getElementById('m-hs').value,'Team':document.getElementById('m-tm').value,'PIC':document.getElementById('m-pc').value,'Internal Code':document.getElementById('m-ic').value,'Serial Number / License':document.getElementById('m-sn').value,'Current Placement':document.getElementById('m-lc').value,'Operational Status':document.getElementById('m-pos').value==='Di Kantor (Ready)'?'Active':'Project Use',No:DATA.length+1});
+  closeM('ma');updateKPI();renderAssets();showToast('✓ Aset ditambahkan (lokal)','g');
+  ['m-nm','m-ic','m-sn','m-pc','m-lc'].forEach(id=>document.getElementById(id).value='');
+}
+
+// ── NAV ───────────────────────────────────────────────────────
+function navTo(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('[id^="n-"]').forEach(x=>x.classList.remove('on'));
+  document.getElementById('p-'+p).classList.add('on');
+  document.getElementById('n-'+p).classList.add('on');
+}
+
+// ── MODAL ─────────────────────────────────────────────────────
+function openM(id){document.getElementById(id).classList.add('on');}
+function closeM(id){document.getElementById(id).classList.remove('on');}
+document.addEventListener('click',e=>{if(e.target.classList.contains('mo'))e.target.classList.remove('on');});
+
+// ── EXPORT ────────────────────────────────────────────────────
+function exportCSV(){
+  const cols=['No','Section','Asset Name','Team','PIC','Internal Code','Serial Number / License','Activation Date','Hour / Cycle','Next Maintenance','Health Status','Operational Status','Current Placement','Firmware','FCC Status','Expired Date','Sertifikat','Maintenance Record Link','Item ID'];
+  const csv=[cols,...DATA.map(d=>cols.map(c=>d[c]||''))].map(r=>r.map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download=`HaloOPS_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+  showToast('✓ CSV diexport','g');
+}
+
+// ── UTILS ─────────────────────────────────────────────────────
+function showToast(m,t=''){const el=document.getElementById('toast');el.textContent=m;el.className='toast'+(t?' '+t:'');el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2800);}
+function esc(s){return(s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+</script>
+</body>
+</html>
