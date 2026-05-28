@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Halo Robotics Ops</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f4f0;--w:#fff;--ink:#0d0d14;--ink2:#3a3a4a;--ink3:#7a7a90;
+  --bdr:#e0dfd8;--bdr2:#c5c4bc;
+  --ac:#2563eb;--acbg:#eff6ff;--acbd:#bfdbfe;
+  --gr:#15803d;--grbg:#f0fdf4;--grbd:#86efac;
+  --rd:#dc2626;--rdbg:#fef2f2;--rdbd:#fca5a5;
+  --am:#d97706;--ambg:#fffbeb;--ambd:#fcd34d;
+  --pu:#7c3aed;--pubg:#f5f3ff;--pubd:#ddd6fe;
+  --fd:'Syne',sans-serif;--fb:'Calibri','Trebuchet MS','Segoe UI',Arial,sans-serif;--fm:'DM Mono',monospace;
+  --r:8px;--rl:12px;--rxl:18px;
+  --sh:0 1px 3px rgba(0,0,0,.07),0 4px 12px rgba(0,0,0,.04);
+  --shl:0 8px 32px rgba(0,0,0,.12);
+  font-size:14px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--bg);color:var(--ink);min-height:100vh}
+
+/* LOGIN */
+#lp{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+#lp::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 70% 20%,rgba(37,99,235,.1) 0%,transparent 60%),
+  radial-gradient(ellipse 60% 50% at 20% 80%,rgba(21,128,61,.08) 0%,transparent 55%),
+  radial-gradient(ellipse 40% 40% at 85% 75%,rgba(124,58,237,.07) 0%,transparent 50%),var(--bg)}
+#lp::after{content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(37,99,235,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,235,.05) 1px,transparent 1px);
+  background-size:48px 48px}
+.ldot{position:absolute;border-radius:50%;pointer-events:none;animation:fl linear infinite}
+@keyframes fl{0%{transform:translateY(0) rotate(0deg);opacity:.6}100%{transform:translateY(-100vh) rotate(720deg);opacity:0}}
+.lwrap{position:relative;z-index:2;width:440px;max-width:calc(100vw - 24px)}
+.lbrand{text-align:center;margin-bottom:28px}
+.llogobox{width:80px;height:80px;border-radius:18px;margin:0 auto 16px;background:#fff;box-shadow:var(--shl);border:1px solid var(--bdr);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.llogobox img{width:100%;height:100%;object-fit:contain;padding:10px;background:#fff}
+.ltitle{font-family:var(--fd);font-size:24px;font-weight:800;letter-spacing:-.5px}
+.ltitle span{color:var(--ac)}
+.lsub{font-size:12px;color:var(--ink3);margin-top:4px;letter-spacing:.05em;text-transform:uppercase}
+.lcard{background:rgba(255,255,255,.88);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.9);border-radius:var(--rxl);padding:32px;box-shadow:var(--shl),0 0 0 1px rgba(37,99,235,.04)}
+.tabs{display:flex;gap:3px;background:var(--bg);border-radius:var(--r);padding:3px;margin-bottom:22px}
+.tab{flex:1;padding:8px;border-radius:7px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);color:var(--ink3);background:transparent;transition:all .2s}
+.tab.on{background:var(--w);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.fg{margin-bottom:14px}
+.fl{font-size:11px;font-weight:700;color:var(--ink3);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em}
+.fi{width:100%;padding:10px 13px;border-radius:var(--r);border:1.5px solid var(--bdr);background:var(--w);color:var(--ink);font-size:13px;font-family:var(--fb);outline:none;transition:border-color .2s,box-shadow .2s}
+.fi:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.fi::placeholder{color:var(--ink3)}
+textarea.fi{resize:vertical;min-height:70px}
+.btnp{width:100%;padding:12px;border-radius:var(--r);border:none;background:linear-gradient(135deg,var(--ac),#1d4ed8);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--fb);transition:all .2s;box-shadow:0 4px 14px rgba(37,99,235,.3);margin-top:4px;letter-spacing:.02em}
+.btnp:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,99,235,.4)}
+.merr{padding:10px 13px;border-radius:var(--r);font-size:12px;font-weight:600;margin-bottom:12px;display:none;background:var(--rdbg);border:1px solid var(--rdbd);color:var(--rd)}
+.mok{padding:10px 13px;border-radius:var(--r);font-size:12px;font-weight:600;margin-bottom:12px;display:none;background:var(--grbg);border:1px solid var(--grbd);color:var(--gr)}
+.lfooter{text-align:center;margin-top:16px;font-size:12px;color:var(--ink3)}
+.lfooter a{color:var(--ac);font-weight:600;text-decoration:none}
+
+/* APP */
+#app{display:none;min-height:100vh;flex-direction:column}
+#app.on{display:flex}
+
+/* TOPBAR */
+.tb{height:56px;background:var(--w);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 22px;gap:14px;position:sticky;top:0;z-index:100;flex-shrink:0}
+.tb-logo{display:flex;align-items:center;gap:9px;flex-shrink:0;background:#fff;padding:4px 12px 4px 8px;border-radius:10px;border:1px solid var(--bdr)}
+.tb-logo img{height:28px;object-fit:contain}
+.tb-logo-name{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--ink)}
+.tb-logo-name span{color:var(--ac)}
+.tb-nav{display:flex;gap:2px;margin-left:16px}
+.tn{padding:7px 12px;border-radius:var(--r);border:none;background:transparent;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);color:var(--ink3);display:flex;align-items:center;gap:6px;transition:all .15s}
+.tn:hover{background:var(--bg);color:var(--ink)}
+.tn.on{background:var(--acbg);color:var(--ac)}
+.tn svg{width:15px;height:15px;flex-shrink:0}
+.tb-sync{display:flex;align-items:center;gap:6px;padding:5px 12px;background:var(--grbg);border:1px solid var(--grbd);border-radius:20px;font-size:11px;font-weight:700;color:var(--gr)}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--gr);animation:pls 2s infinite}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.3}}
+.tb-right{display:flex;align-items:center;gap:8px;margin-left:auto;position:relative}
+.nbadge{position:relative;display:inline-flex}
+.nbadge-cnt{position:absolute;top:-4px;right:-4px;background:var(--rd);color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--w)}
+.ubtn{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 8px;background:var(--bg);border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;color:var(--ink);font-family:var(--fb);border:none;transition:all .15s}
+.ubtn:hover{background:var(--bdr)}
+.uav{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--ac),#7c3aed);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.udd{position:absolute;top:calc(100% + 8px);right:0;width:230px;background:var(--w);border:1px solid var(--bdr);border-radius:var(--rl);box-shadow:var(--shl);z-index:200;overflow:hidden;display:none}
+.udd.on{display:block}
+.udd-hd{padding:12px 14px;border-bottom:1px solid var(--bdr);background:var(--bg)}
+.udd-lbl{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.udd-name{font-size:14px;font-weight:700}
+.udd-email{font-size:11px;color:var(--ink3)}
+.di{display:flex;align-items:center;gap:10px;padding:10px 14px;font-size:13px;font-weight:500;color:var(--ink2);cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:var(--fb);text-decoration:none;transition:background .12s}
+.di:hover{background:var(--bg)}
+.di svg{width:16px;height:16px;flex-shrink:0;opacity:.55}
+.di.red{color:var(--rd)}.di.red svg{opacity:1}
+.ddiv{height:1px;background:var(--bdr);margin:4px 0}
+
+/* LAYOUT */
+.abody{display:flex;flex:1;overflow:hidden;height:calc(100vh - 56px)}
+.sb{width:190px;flex-shrink:0;background:var(--w);border-right:1px solid var(--bdr);padding:12px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.sb-lbl{font-size:10px;font-weight:700;color:var(--ink3);letter-spacing:.1em;text-transform:uppercase;padding:8px 8px 4px;margin-top:6px}
+.ni{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r);cursor:pointer;font-size:12px;font-weight:600;color:var(--ink3);border:none;background:none;width:100%;text-align:left;font-family:var(--fb);transition:all .12s}
+.ni:hover{background:var(--bg);color:var(--ink)}
+.ni.on{background:var(--acbg);color:var(--ac)}
+.sbdiv{height:1px;background:var(--bdr);margin:6px 0}
+
+.main{flex:1;overflow-y:auto}
+.pg{display:none}.pg.on{display:block}
+
+/* PAGE HEADER */
+.ph{padding:22px 22px 0;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+.ph-title{font-family:var(--fd);font-size:20px;font-weight:700;letter-spacing:-.3px}
+.ph-sub{font-size:12px;color:var(--ink3);margin-top:3px}
+
+/* KPI */
+.kpi{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:0 22px;margin-bottom:18px}
+@media(max-width:1100px){.kpi{grid-template-columns:repeat(3,1fr)}}
+.kc{background:var(--w);border:1px solid var(--bdr);border-radius:var(--rl);padding:16px;box-shadow:var(--sh);transition:all .2s;position:relative;overflow:hidden}
+.kc::after{content:'';position:absolute;top:0;left:0;right:0;height:2.5px}
+.kc.b::after{background:var(--ac)}.kc.g::after{background:var(--gr)}
+.kc.a::after{background:var(--am)}.kc.r::after{background:var(--rd)}
+.kc:hover{box-shadow:var(--shl);transform:translateY(-2px)}
+.kc-ic{font-size:22px;margin-bottom:10px}
+.kc-lb{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.kc-v{font-family:var(--fd);font-size:28px;font-weight:700;line-height:1;margin-bottom:4px}
+.kc-s{font-size:11px;color:var(--ink3)}
+.kc-v.b{color:var(--ac)}.kc-v.g{color:var(--gr)}.kc-v.a{color:var(--am)}.kc-v.r{color:var(--rd)}
+
+/* CARD */
+.card{background:var(--w);border:1px solid var(--bdr);border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden;margin:0 22px 18px}
+.ch{padding:14px 18px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.ct{font-family:var(--fd);font-size:14px;font-weight:700}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{padding:4px 12px;border-radius:20px;border:1.5px solid var(--bdr);background:var(--w);color:var(--ink3);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--fb);transition:all .15s}
+.chip:hover{border-color:var(--bdr2);color:var(--ink)}
+.chip.on{background:var(--acbg);border-color:var(--acbd);color:var(--ac)}
+.sr{padding:12px 18px;border-bottom:1px solid var(--bdr);display:flex;gap:8px;flex-wrap:wrap}
+.si{flex:1;min-width:180px;padding:8px 13px;border-radius:var(--r);border:1.5px solid var(--bdr);background:var(--bg);color:var(--ink);font-size:13px;font-family:var(--fb);outline:none;transition:border-color .2s}
+.si:focus{border-color:var(--ac);background:var(--w)}.si::placeholder{color:var(--ink3)}
+.fsel{padding:8px 12px;border-radius:var(--r);border:1.5px solid var(--bdr);background:var(--w);color:var(--ink);font-size:12px;font-family:var(--fb);outline:none}
+.fsel:focus{border-color:var(--ac)}
+
+/* TABLE */
+.twrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{padding:9px 16px;text-align:left;font-size:10px;font-weight:700;color:var(--ink3);border-bottom:1px solid var(--bdr);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;background:var(--bg)}
+td{padding:10px 16px;border-bottom:1px solid rgba(0,0,0,.04);vertical-align:middle}
+tr:hover td{background:rgba(37,99,235,.02)}
+tr:last-child td{border-bottom:none}
+.ac-cell{display:flex;align-items:center;gap:10px}
+.ac-thumb{width:36px;height:36px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--bg);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center}
+.ac-thumb img{width:100%;height:100%;object-fit:contain;padding:5px}
+.ac-name{font-size:13px;font-weight:700;color:var(--ink);line-height:1.2}
+.ac-code{font-family:var(--fm);font-size:10px;color:var(--ink3);margin-top:1px}
+.abr{display:flex;gap:4px}
+.ab{padding:4px 9px;border-radius:6px;border:1px solid var(--bdr);background:var(--w);color:var(--ink3);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .12s}
+.ab:hover{background:var(--bg);color:var(--ink)}
+.ab-bl{background:var(--acbg);border-color:var(--acbd);color:var(--ac)}
+.ab-gr{background:var(--grbg);border-color:var(--grbd);color:var(--gr)}
+.ab-am{background:var(--ambg);border-color:var(--ambd);color:var(--am)}
+
+/* BADGES */
+.bd{display:inline-flex;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;white-space:nowrap}
+.bd-gr{background:var(--grbg);color:var(--gr)}.bd-rd{background:var(--rdbg);color:var(--rd)}
+.bd-am{background:var(--ambg);color:var(--am)}.bd-bl{background:var(--acbg);color:var(--ac)}
+.bd-pu{background:var(--pubg);color:var(--pu)}.bd-gy{background:var(--bg);color:var(--ink3);border:1px solid var(--bdr)}
+.loc-in{background:#eff6ff;color:#1d4ed8;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700}
+.loc-out{background:var(--ambg);color:var(--am);padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700}
+
+/* DETAIL PANEL */
+.dp{position:fixed;top:56px;right:0;width:400px;height:calc(100vh - 56px);background:var(--w);border-left:1px solid var(--bdr);box-shadow:-4px 0 24px rgba(0,0,0,.08);transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:50;overflow-y:auto;display:flex;flex-direction:column}
+.dp.on{transform:translateX(0)}
+.dp-hd{padding:16px 18px;border-bottom:1px solid var(--bdr);position:sticky;top:0;background:var(--w);z-index:1;display:flex;gap:12px;align-items:flex-start}
+.dp-thumb{width:80px;height:80px;border-radius:12px;overflow:hidden;border:1px solid var(--bdr);flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.dp-thumb img{width:100%;height:100%;object-fit:contain;padding:8px}
+.dp-thumb-ph{font-size:30px}
+.dp-name{font-family:var(--fd);font-size:15px;font-weight:700;margin-bottom:4px}
+.dp-code{font-family:var(--fm);font-size:11px;color:var(--ink3);margin-bottom:6px}
+.dp-close{margin-left:auto;width:30px;height:30px;border-radius:8px;border:1px solid var(--bdr);background:var(--w);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--ink3);flex-shrink:0}
+.dp-close:hover{background:var(--bg)}
+.dp-body{padding:16px 18px;flex:1}
+.dp-sec{margin-bottom:16px}
+.dp-sec-t{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.dp-sec-t::after{content:'';flex:1;height:1px;background:var(--bdr)}
+.dp-g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.df .dl{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.df .dv{font-size:12px;font-weight:600;color:var(--ink)}
+.df .dv.em{color:var(--ink3);font-weight:400;font-style:italic}
+.dp-act{padding:14px 18px;border-top:1px solid var(--bdr);display:flex;gap:8px;background:var(--bg)}
+.dp-btn{flex:1;padding:9px;border-radius:var(--r);border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--fb);text-align:center;transition:all .15s}
+.dp-edit{background:var(--w);border:1px solid var(--bdr);color:var(--ink2)}.dp-edit:hover{background:var(--bdr)}
+.dp-loan{background:var(--ac);color:#fff}.dp-loan:hover{background:#1d4ed8}
+.dp-ret{background:var(--gr);color:#fff}.dp-ret:hover{background:#166534}
+
+/* PENDING CARD */
+.pcard{background:var(--w);border:1px solid var(--bdr);border-radius:var(--rl);padding:14px 16px;box-shadow:var(--sh);margin:0 22px 10px}
+.pcard-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
+.pcard-name{font-size:14px;font-weight:700;margin-bottom:3px}
+.pcard-meta{font-size:12px;color:var(--ink3)}
+.pcard-ts{font-size:11px;color:var(--ink3);margin-left:auto;white-space:nowrap}
+.pcard-det{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:10px;background:var(--bg);border-radius:var(--r);margin-bottom:10px;font-size:11px}
+.pdl{color:var(--ink3);font-weight:600;margin-bottom:1px}
+.pdv{font-weight:700;color:var(--ink)}
+.pcard-act{display:flex;gap:8px}
+.pa{flex:1;padding:8px;border-radius:var(--r);border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--fb);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
+.pa-ok{background:var(--gr);color:#fff}.pa-ok:hover{opacity:.9}
+.pa-no{background:var(--rdbg);border:1px solid var(--rdbd);color:var(--rd)}.pa-no:hover{background:var(--rd);color:#fff}
+
+/* LOAN CARD */
+.lc{background:var(--w);border:1px solid var(--bdr);border-radius:var(--rl);padding:14px 16px;box-shadow:var(--sh);margin:0 22px 10px}
+.lc-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.lc-thumb{width:44px;height:44px;border-radius:10px;overflow:hidden;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;background:var(--bg);flex-shrink:0}
+.lc-thumb img{width:100%;height:100%;object-fit:contain;padding:6px}
+.lc-name{font-size:13px;font-weight:700;margin-bottom:2px}
+.lc-code{font-family:var(--fm);font-size:10px;color:var(--ink3)}
+.lc-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.lc-act{display:flex;gap:6px}
+.lc-btn{padding:6px 14px;border-radius:7px;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--fb);transition:all .12s}
+.lc-ret{background:var(--gr);color:#fff}.lc-ret:hover{opacity:.9}
+
+/* CREW */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:10px;padding:16px 18px}
+.cc{background:var(--bg);border:1px solid var(--bdr);border-radius:var(--rl);padding:14px;transition:border-color .2s}
+.cc:hover{border-color:var(--bdr2)}
+.cc-av{width:38px;height:38px;border-radius:10px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:16px;font-weight:700}
+.cc-name{font-size:13px;font-weight:700;margin-bottom:2px}
+.cc-team{font-size:11px;color:var(--ink3);margin-bottom:8px}
+
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.mo.on{opacity:1;pointer-events:all}
+.md{background:var(--w);border-radius:var(--rxl);padding:26px;width:520px;max-width:calc(100vw - 24px);max-height:88vh;overflow-y:auto;transform:translateY(14px);transition:transform .2s;box-shadow:var(--shl)}
+.mo.on .md{transform:translateY(0)}
+.md-t{font-family:var(--fd);font-size:17px;font-weight:700;margin-bottom:3px}
+.md-s{font-size:12px;color:var(--ink3);margin-bottom:20px}
+.md-ft{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--bdr)}
+.bcl{padding:9px 18px;border-radius:var(--r);border:1.5px solid var(--bdr);background:var(--w);color:var(--ink2);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb)}
+.bcl:hover{background:var(--bg)}
+.bsv{padding:9px 20px;border-radius:var(--r);border:none;background:var(--ac);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--fb)}
+.bsv:hover{background:#1d4ed8}
+.bsv.g{background:var(--gr)}.bsv.g:hover{background:#166534}
+.bsv.rd{background:var(--rd)}.bsv.rd:hover{opacity:.9}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fsec{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--bdr)}
+
+/* TABS */
+.ltabs{display:flex;gap:3px;background:var(--bg);border-radius:var(--r);padding:3px;margin:0 22px 16px}
+.ltab{flex:1;padding:8px 12px;border-radius:7px;border:none;background:transparent;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--fb);color:var(--ink3);transition:all .2s;text-align:center}
+.ltab.on{background:var(--w);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+
+/* MISC */
+.mwarn{background:var(--ambg);border:1px solid var(--ambd);border-radius:var(--r);padding:8px 12px;font-size:11px;font-weight:600;color:var(--am);display:flex;align-items:center;gap:6px;margin-top:8px}
+.empty{text-align:center;padding:3rem;color:var(--ink3);font-size:13px}
+.empty .ei{font-size:36px;margin-bottom:12px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:600;z-index:9999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);box-shadow:var(--shl);pointer-events:none;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.g{background:var(--gr)}.toast.r{background:var(--rd)}.toast.am{background:var(--am)}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,.1);border-top-color:var(--ac);border-radius:50%;animation:sp .6s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="lp">
+  <div class="ldot" style="width:6px;height:6px;background:rgba(37,99,235,.25);left:15%;top:80%;animation-duration:8s"></div>
+  <div class="ldot" style="width:4px;height:4px;background:rgba(21,128,61,.2);left:75%;top:90%;animation-duration:11s;animation-delay:2s"></div>
+  <div class="ldot" style="width:8px;height:8px;background:rgba(124,58,237,.15);left:45%;top:85%;animation-duration:9s;animation-delay:4s"></div>
+  <div class="ldot" style="width:5px;height:5px;background:rgba(37,99,235,.2);left:85%;top:95%;animation-duration:13s;animation-delay:1s"></div>
+  <div class="ldot" style="width:3px;height:3px;background:rgba(21,128,61,.3);left:25%;top:75%;animation-duration:7s;animation-delay:3s"></div>
+  <div class="ldot" style="width:6px;height:6px;background:rgba(217,119,6,.15);left:60%;top:88%;animation-duration:10s;animation-delay:5s"></div>
+  <div class="lwrap">
+    <div class="lbrand">
+      <div class="llogobox">
+        <img src="https://halorobotics.com/wp-content/uploads/2024/03/Halo-Robotics-Logo-Type-3.png" onerror="this.parentElement.innerHTML='🚁'">
+      </div>
+      <div class="ltitle">Halo Robotics <span>Ops</span></div>
+      <div class="lsub">Asset & CrewOps Platform</div>
+    </div>
+    <div class="lcard">
+      <div class="tabs"><button class="tab on" onclick="stab('login')">Masuk</button><button class="tab" onclick="stab('reg')">Daftar</button></div>
+      <div id="lf">
+        <div class="merr" id="lerr"></div>
+        <div class="fg"><label class="fl">Email</label><input class="fi" id="le" type="email" placeholder="nama@halo-robotics.com"></div>
+        <div class="fg"><label class="fl">Kata Sandi</label><input class="fi" id="lpass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+        <button class="btnp" onclick="doLogin()" id="lbtn">Masuk ke Dashboard</button>
+        <div class="lfooter">Belum punya akun? <a href="#" onclick="stab('reg')">Daftar sekarang</a></div>
+      </div>
+      <div id="rf" style="display:none">
+        <div class="merr" id="rerr"></div><div class="mok" id="rok"></div>
+        <div class="fg"><label class="fl">Nama Lengkap</label><input class="fi" id="rn" placeholder="Nama lengkap"></div>
+        <div class="fg"><label class="fl">Email Kantor</label><input class="fi" id="re" type="email" placeholder="nama@halo-robotics.com"></div>
+        <div class="fg"><label class="fl">Kata Sandi</label><input class="fi" id="rp" type="password" placeholder="Min. 6 karakter"></div>
+        <button class="btnp" onclick="doReg()" id="rbtn">Buat Akun</button>
+        <div class="lfooter">Sudah punya akun? <a href="#" onclick="stab('login')">Masuk di sini</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="tb">
+    <div class="tb-logo">
+      <img src="https://halorobotics.com/wp-content/uploads/2024/03/Halo-Robotics-Logo-Type-3.png" onerror="this.style.display='none'">
+      <div class="tb-logo-name">Halo Robotics <span>Ops</span></div>
+    </div>
+    <nav class="tb-nav">
+      <button class="tn on" onclick="navTo('inv')" id="n-inv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Inventaris</button>
+      <button class="tn" onclick="navTo('loan')" id="n-loan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Peminjaman<div class="nbadge" id="lb-wrap" style="display:none"><div class="nbadge-cnt" id="lb-cnt">0</div></div></button>
+      <button class="tn" onclick="navTo('approval')" id="n-approval" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>Approval<div class="nbadge" id="ab-wrap" style="display:none"><div class="nbadge-cnt" id="ab-cnt">0</div></div></button>
+      <button class="tn" onclick="navTo('crew')" id="n-crew"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Personil</button>
+    </nav>
+    <div class="tb-sync" id="tb-sync-wrap"><div class="sdot"></div><span id="stxt">Memuat...</span></div>
+  <button onclick="setAppsURL()" title="Set Apps Script URL" style="padding:4px 8px;border-radius:6px;border:1px solid var(--bdr);background:transparent;font-size:10px;color:var(--ink3);cursor:pointer;font-family:var(--fb)"title="Konfigurasi">⚙️</button>
+    <div class="tb-right">
+      <button class="ubtn" id="ubtn" onclick="toggleDD()"><div class="uav" id="uav">?</div><span id="uname">—</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="udd" id="udd">
+        <div class="udd-hd"><div class="udd-lbl">Sesi Aktif</div><div class="udd-name" id="udd-name">—</div><div class="udd-email" id="udd-email">—</div></div>
+        <button class="di" onclick="openM('m-ci');closeDD()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>Form Peminjaman (Check In)</button>
+        <button class="di" onclick="exportCSV();closeDD()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export Data ke CSV</button>
+        <a class="di" id="sheet-link" href="#" target="_blank" onclick="closeDD()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Buka Spreadsheet</a>
+        <div class="ddiv"></div>
+        <button class="di" onclick="openM('m-add');closeDD()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Tambah Asset Baru</button>
+        <div class="ddiv"></div>
+        <button class="di red" onclick="doLogout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Keluar Akun</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="abody">
+    <!-- SIDEBAR -->
+    <div class="sb">
+      <div class="sb-lbl">Filter Tim</div>
+      <button class="ni on" onclick="ft('')" id="ft-">Semua Tim</button>
+      <button class="ni" onclick="ft('Security & ICT')" id="ft-s">🔐 Security & ICT</button>
+      <button class="ni" onclick="ft('Mapping')" id="ft-m">🗺️ Mapping</button>
+      <button class="ni" onclick="ft('Inspection')" id="ft-i">🔍 Inspection</button>
+      <button class="ni" onclick="ft('Delivery')" id="ft-d">📦 Delivery</button>
+      <button class="ni" onclick="ft('Spraying')" id="ft-sp">🌿 Spraying</button>
+      <button class="ni" onclick="ft('Projects')" id="ft-p">🚀 Projects</button>
+      <button class="ni" onclick="ft('Training')" id="ft-t">🎓 Training</button>
+      <div class="sbdiv"></div>
+      <div class="sb-lbl">Kategori</div>
+      <button class="ni" onclick="fcat('Drone')">🚁 Drone Unit</button>
+      <button class="ni" onclick="fcat('Dock')">🏠 Dock</button>
+      <button class="ni" onclick="fcat('Battery')">🔋 Battery</button>
+      <button class="ni" onclick="fcat('Camera')">📷 Camera/Payload</button>
+      <button class="ni" onclick="fcat('GNSS')">📡 GNSS</button>
+    </div>
+
+    <div class="main">
+      <!-- INVENTARIS -->
+      <div class="pg on" id="p-inv">
+        <div class="ph">
+          <div><div class="ph-title">Manajemen Aset Operasional</div><div class="ph-sub">Platform dinamis · data disinkronkan langsung dengan Google Spreadsheet</div></div>
+          <button class="ab ab-bl" onclick="loadAssets()" id="rbtn2" style="padding:7px 14px;border-radius:var(--r);font-family:var(--fb);font-size:12px;font-weight:700;cursor:pointer">↻ Refresh</button>
+        </div>
+        <div class="kpi">
+          <div class="kc b"><div class="kc-ic">👥</div><div class="kc-lb">Total Aset</div><div class="kc-v b" id="k-t">—</div><div class="kc-s" id="k-s">—</div></div>
+          <div class="kc g"><div class="kc-ic">🏢</div><div class="kc-lb">Di Kantor</div><div class="kc-v g" id="k-o">—</div><div class="kc-s">Standby ready</div></div>
+          <div class="kc a"><div class="kc-ic">🛫</div><div class="kc-lb">Di Site</div><div class="kc-v a" id="k-st">—</div><div class="kc-s">Dipinjam/Operasi</div></div>
+          <div class="kc g"><div class="kc-ic">✅</div><div class="kc-lb">Kondisi Sehat</div><div class="kc-v g" id="k-g">—</div><div class="kc-s">Siap digunakan</div></div>
+          <div class="kc r"><div class="kc-ic">🔧</div><div class="kc-lb">Maintenance</div><div class="kc-v r" id="k-m">—</div><div class="kc-s">Perlu perhatian</div></div>
+        </div>
+        <div class="card">
+          <div class="ch">
+            <div class="ct">Daftar Aset</div>
+            <div class="chips">
+              <button class="chip on" onclick="sf('',this)">Semua</button>
+              <button class="chip" onclick="sf('kantor',this)">📍 Di Kantor</button>
+              <button class="chip" onclick="sf('site',this)">🛫 Di Site</button>
+              <button class="chip" onclick="sf('good',this)">✅ Sehat</button>
+              <button class="chip" onclick="sf('maint',this)">🔧 Maintenance</button>
+              <button class="chip" onclick="sf('ooc',this)">⛔ OOC</button>
+            </div>
+          </div>
+          <div class="sr">
+            <input class="si" id="si" placeholder="Cari aset, tipe, kode, PIC, lokasi..." oninput="renderTable()">
+            <select class="fsel" id="fmfr" onchange="renderTable()"><option value="">Semua Pabrikan</option><option>DJI</option><option>Emlid</option><option>Flyability</option><option>Autel</option><option>QYSEA</option></select>
+          </div>
+          <div class="twrap" id="twrap"><div class="empty"><div class="ei"><span class="spin"></span></div>Memuat data...</div></div>
+        </div>
+      </div>
+
+      <!-- PEMINJAMAN -->
+      <div class="pg" id="p-loan">
+        <div class="ph"><div><div class="ph-title">Peminjaman Aset</div><div class="ph-sub">Check In & Check Out dengan approval workflow</div></div>
+          <button class="bsv" onclick="openM('m-ci')" style="border-radius:var(--r);font-family:var(--fb)">+ Check In (Pinjam)</button></div>
+        <div class="kpi" style="grid-template-columns:repeat(3,1fr)">
+          <div class="kc b"><div class="kc-lb">Sedang Dipinjam</div><div class="kc-v b" id="lk-ac">0</div></div>
+          <div class="kc g"><div class="kc-lb">Sudah Dikembalikan</div><div class="kc-v g" id="lk-rt">0</div></div>
+          <div class="kc r"><div class="kc-lb">Overdue</div><div class="kc-v r" id="lk-ov">0</div></div>
+        </div>
+        <div class="ltabs">
+          <button class="ltab on" onclick="setLT('active',this)">🟢 Aktif (<span id="lt-ac">0</span>)</button>
+          <button class="ltab" onclick="setLT('pending',this)">⏳ Pending Approval (<span id="lt-pd">0</span>)</button>
+          <button class="ltab" onclick="setLT('history',this)">📋 Riwayat (<span id="lt-hc">0</span>)</button>
+        </div>
+        <div id="wrap-active"><div id="active-loans"></div></div>
+        <div id="wrap-pending" style="display:none"><div id="pending-loans"></div></div>
+        <div id="wrap-history" style="display:none"><div class="card" style="margin:0 22px 18px"><div id="hist-loans"></div></div></div>
+      </div>
+
+      <!-- APPROVAL -->
+      <div class="pg" id="p-approval">
+        <div class="ph"><div><div class="ph-title">Approval Center</div><div class="ph-sub">Review dan setujui permintaan Check In / Check Out</div></div>
+          <button class="ab ab-bl" onclick="loadApprovals()" style="padding:7px 14px;border-radius:var(--r);font-family:var(--fb);font-size:12px;font-weight:700;cursor:pointer">↻ Refresh</button></div>
+        <div class="ltabs">
+          <button class="ltab on" onclick="setAT('pending',this)">⏳ Pending (<span id="at-pd">0</span>)</button>
+          <button class="ltab" onclick="setAT('approved',this)">✅ Disetujui (<span id="at-ap">0</span>)</button>
+          <button class="ltab" onclick="setAT('rejected',this)">❌ Ditolak (<span id="at-rj">0</span>)</button>
+        </div>
+        <div id="approval-list"></div>
+      </div>
+
+      <!-- PERSONIL -->
+      <div class="pg" id="p-crew">
+        <div class="ph"><div><div class="ph-title">Kalender & Personil</div><div class="ph-sub">Direktori tim operasional</div></div>
+          <button class="bsv" onclick="openM('m-crew')" style="border-radius:var(--r);font-family:var(--fb)">+ Tambah Personil</button></div>
+        <div class="card"><div class="ch"><div class="ct">Direktori Personil</div>
+          <div class="chips"><button class="chip on" onclick="scf('',this)">Semua</button><button class="chip" onclick="scf('ready',this)">✅ Tersedia</button><button class="chip" onclick="scf('duty',this)">🛫 Bertugas</button><button class="chip" onclick="scf('off',this)">💤 Cuti</button></div></div>
+          <div id="cgrid" class="cgrid"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL PANEL -->
+<div class="dp" id="dp">
+  <div class="dp-hd">
+    <div class="dp-thumb"><img id="dp-img" src="" onerror="this.style.display='none';document.getElementById('dp-ph').style.display='flex'"><div class="dp-thumb-ph" id="dp-ph" style="display:none">📦</div></div>
+    <div style="flex:1;min-width:0">
+      <div class="dp-name" id="dp-name">—</div>
+      <div class="dp-code" id="dp-code">—</div>
+      <div id="dp-bds" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px"></div>
+    </div>
+    <button class="dp-close" onclick="closeDP()">✕</button>
+  </div>
+  <div class="dp-body" id="dp-body"></div>
+  <div class="dp-act" id="dp-act"></div>
+</div>
+
+<!-- CHECK IN MODAL -->
+<div class="mo" id="m-ci">
+  <div class="md">
+    <div class="md-t">📤 Form Check In — Pinjam Aset</div>
+    <div class="md-s">Permintaan dikirim ke manager untuk approval. Kamu dapat email konfirmasi setelah disetujui.</div>
+    <div class="fg"><label class="fl">Nama Aset *</label><input class="fi" id="ci-asset" list="asset-dl" placeholder="Ketik nama aset..."><datalist id="asset-dl"></datalist></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Nama Peminjam *</label><input class="fi" id="ci-name" placeholder="Nama lengkap"></div>
+      <div class="fg"><label class="fl">Email Peminjam *</label><input class="fi" id="ci-email" type="email" placeholder="email@halo-robotics.com"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Tim *</label><select class="fi fsel" id="ci-team"><option>Security & ICT</option><option>Inspection</option><option>Mapping</option><option>Delivery</option><option>Spraying</option><option>Projects</option><option>Training</option></select></div>
+      <div class="fg"><label class="fl">Kegiatan / Project *</label><input class="fi" id="ci-proj" placeholder="Nama project"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Lokasi Tujuan *</label><input class="fi" id="ci-dest" placeholder="PHM, Kalimantan..."></div>
+      <div class="fg"><label class="fl">Est. Tanggal Kembali</label><input class="fi" id="ci-ret" type="date"></div>
+    </div>
+    <div class="fsec">Flight Hours & Personil</div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Flight Hours Saat Ini (dari sheet)</label><input class="fi" id="ci-hrbef" readonly placeholder="Otomatis"></div>
+      <div class="fg"><label class="fl">Estimasi Tambah Flight Hours</label><input class="fi" id="ci-hradd" type="number" placeholder="0" min="0"></div>
+    </div>
+    <div class="fg"><label class="fl">Personil yang Terlibat</label><input class="fi" id="ci-pers" placeholder="Pilot, co-pilot, teknisi (pisah koma)"></div>
+    <div class="fg"><label class="fl">Catatan Tambahan</label><textarea class="fi" id="ci-notes" placeholder="Kondisi awal, keterangan..."></textarea></div>
+    <div id="ci-mwarn" style="display:none" class="mwarn">⚠️ <span id="ci-mwarn-msg"></span></div>
+    <div class="md-ft"><button class="bcl" onclick="closeM('m-ci')">Batal</button><button class="bsv" onclick="doCheckIn()" id="ci-btn">Kirim untuk Approval ▶</button></div>
+  </div>
+</div>
+
+<!-- CHECK OUT MODAL -->
+<div class="mo" id="m-co">
+  <div class="md">
+    <div class="md-t">📥 Form Check Out — Kembalikan Aset</div>
+    <div class="md-s" id="co-sub">Konfirmasi pengembalian aset.</div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Kondisi Saat Kembali *</label><select class="fi fsel" id="co-health"><option>Good</option><option>Require Maintenance</option><option>Out of Commission</option></select></div>
+      <div class="fg"><label class="fl">Lokasi Kembali</label><input class="fi" id="co-loc" placeholder="Ranji, Office OPS..."></div>
+    </div>
+    <div class="fsec">Update Flight Hours</div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Flight Hours Sebelum Pinjam</label><input class="fi" id="co-hrbef" readonly></div>
+      <div class="fg"><label class="fl">Flight Hours Selama Pinjam *</label><input class="fi" id="co-hradd" type="number" placeholder="0" min="0" oninput="calcCOtotal()"></div>
+    </div>
+    <div id="co-total-wrap" style="background:var(--acbg);border:1px solid var(--acbd);border-radius:var(--r);padding:10px 13px;margin-bottom:12px;font-size:12px;display:none">
+      <span style="color:var(--ink3);font-weight:600">Total Flight Hours setelah kembali: </span>
+      <span id="co-total" style="font-weight:700;color:var(--ac);font-size:14px">—</span>
+      <div id="co-mnxt" style="color:var(--ink3);font-size:11px;margin-top:3px"></div>
+    </div>
+    <div class="fg"><label class="fl">Catatan Pengembalian</label><textarea class="fi" id="co-notes" placeholder="Temuan, kondisi detail..."></textarea></div>
+    <input type="hidden" id="co-lid">
+    <input type="hidden" id="co-curhrs">
+    <div class="md-ft"><button class="bcl" onclick="closeM('m-co')">Batal</button><button class="bsv g" onclick="doCheckOut()">Kirim untuk Approval ▶</button></div>
+  </div>
+</div>
+
+<!-- EDIT ASSET -->
+<div class="mo" id="m-edit">
+  <div class="md">
+    <div class="md-t">✏️ Edit Data Aset</div>
+    <div class="md-s" id="edit-sub">Update data asset di Google Sheet.</div>
+    <input type="hidden" id="edit-name"><input type="hidden" id="edit-code">
+    <div class="fr">
+      <div class="fg"><label class="fl">Health Status</label><select class="fi fsel" id="edit-hs"><option>Good</option><option>Require Maintenance</option><option>Out of Commission</option><option>Demo Only</option></select></div>
+      <div class="fg"><label class="fl">Operational Status</label><select class="fi fsel" id="edit-os"><option>Active</option><option>Project Use</option><option>Not Active</option><option>Need to Sell</option></select></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Lokasi Terkini</label><input class="fi" id="edit-loc" placeholder="Current Placement"></div>
+      <div class="fg"><label class="fl">Flight Hours / Hour Cycle</label><input class="fi" id="edit-hr" type="number" placeholder="0" oninput="previewMaint()"></div>
+    </div>
+    <div id="edit-mwarn" style="display:none" class="mwarn">⚠️ <span id="edit-mwarn-msg"></span></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Next Maintenance (auto)</label><input class="fi" id="edit-maint" placeholder="Jun 26 (otomatis dari hours)"></div>
+      <div class="fg"><label class="fl">PIC</label><input class="fi" id="edit-pic" placeholder="Nama PIC"></div>
+    </div>
+    <div class="fg"><label class="fl">Firmware</label><input class="fi" id="edit-fw" placeholder="Versi firmware"></div>
+    <div class="md-ft"><button class="bcl" onclick="closeM('m-edit')">Batal</button><button class="bsv" onclick="doEditAsset()" id="edit-btn">Simpan ke Sheet</button></div>
+  </div>
+</div>
+
+<!-- ADD ASSET -->
+<div class="mo" id="m-add">
+  <div class="md">
+    <div class="md-t">➕ Tambah Aset Baru</div>
+    <div class="md-s">Data langsung ditambahkan ke Google Sheet Master.</div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Section / Kategori *</label><select class="fi fsel" id="aa-sec"><option>Drone Unit - New</option><option>Drone Unit - Old</option><option>Dock</option><option>Battery Dock</option><option>Battery - New</option><option>Charger - New</option><option>Camera/Sensor/Payload</option><option>GNSS</option><option>Laptops</option><option>Anti Drone</option><option>Supporting & Tools</option></select></div>
+      <div class="fg"><label class="fl">Health Status *</label><select class="fi fsel" id="aa-hs"><option>Good</option><option>Require Maintenance</option><option>Out of Commission</option></select></div>
+    </div>
+    <div class="fg"><label class="fl">Nama Asset *</label><input class="fi" id="aa-name" placeholder="DJI Matrice 400 - Unit H"></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Internal Code</label><input class="fi" id="aa-code" placeholder="OS0090"></div>
+      <div class="fg"><label class="fl">Serial Number</label><input class="fi" id="aa-sn" placeholder="SN..."></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Tim *</label><select class="fi fsel" id="aa-team"><option>Security & ICT</option><option>Inspection</option><option>Mapping</option><option>Delivery</option><option>Spraying</option><option>Projects</option><option>Training</option><option>All Team</option></select></div>
+      <div class="fg"><label class="fl">PIC *</label><input class="fi" id="aa-pic" placeholder="Nama PIC"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Lokasi *</label><input class="fi" id="aa-loc" placeholder="Ranji, Office OPS..."></div>
+      <div class="fg"><label class="fl">Tanggal Aktivasi</label><input class="fi" id="aa-act" type="date"></div>
+    </div>
+    <div class="fg"><label class="fl">Hour / Cycle Awal</label><input class="fi" id="aa-hr" type="number" placeholder="0" value="0"></div>
+    <div class="md-ft"><button class="bcl" onclick="closeM('m-add')">Batal</button><button class="bsv" onclick="doAddAsset()" id="aa-btn">Tambah ke Sheet</button></div>
+  </div>
+</div>
+
+<!-- REJECT MODAL -->
+<div class="mo" id="m-rej">
+  <div class="md" style="max-width:420px">
+    <div class="md-t">❌ Tolak Permintaan</div>
+    <div class="md-s" id="rej-sub">Berikan alasan penolakan.</div>
+    <textarea class="fi" id="rej-reason" placeholder="Tulis alasan penolakan..." style="min-height:80px;margin-top:4px"></textarea>
+    <input type="hidden" id="rej-id">
+    <div class="md-ft"><button class="bcl" onclick="closeM('m-rej')">Batal</button><button class="bsv rd" onclick="doReject()">Konfirmasi Tolak</button></div>
+  </div>
+</div>
+
+<!-- CREW MODAL -->
+<div class="mo" id="m-crew">
+  <div class="md">
+    <div class="md-t">👤 Tambah Personil</div>
+    <div class="md-s">Tambah anggota tim ke direktori personil.</div>
+    <div class="fg"><label class="fl">Nama Lengkap *</label><input class="fi" id="cn" placeholder="Nama lengkap"></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Tim *</label><select class="fi fsel" id="ct"><option>Inspection</option><option>Security & ICT</option><option>Mapping</option><option>Delivery</option><option>Spraying</option><option>Projects</option><option>Training</option></select></div>
+      <div class="fg"><label class="fl">Status *</label><select class="fi fsel" id="cs"><option>Tersedia (Ready)</option><option>Sedang Bertugas</option><option>Cuti / Off</option></select></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">WhatsApp</label><input class="fi" id="cp" placeholder="08xx"></div>
+      <div class="fg"><label class="fl">Lokasi Base</label><input class="fi" id="cb" placeholder="Jakarta..."></div>
+    </div>
+    <div class="fg"><label class="fl">Kompetensi (pisah koma)</label><input class="fi" id="ck" placeholder="DJI Certified, BVLOS..."></div>
+    <div class="md-ft"><button class="bcl" onclick="closeM('m-crew')">Batal</button><button class="bsv" onclick="doAddCrew()">Simpan</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+// ── CONFIG ─────────────────────────────────────────────
+const SHEET_ID = '1XdTzyGl-Y96DZduM-vlEtczy3JNzS3cUO-6yuSWOKbE';
+const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`;
+const APPROVAL_EMAIL = 'zainal@halo-robotics.com';
+
+// ── APPS SCRIPT WEB APP URL ────────────────────────────────────
+const APPS_URL = 'https://script.google.com/macros/s/AKfycbx2jeyo0UqPIJcJEtDEht69C3lzWzp8nRhOcldLqRAVOj5-AFx4m8s4fWvLU31rb1zp/exec';
+const MAINT_HRS = 150, MAINT_MONTHS = 6;
+const MONTHS = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Aug','Sep','Oct','Nov','Des'];
+
+// ── STATE ──────────────────────────────────────────────
+let DATA = [], CREW = JSON.parse(localStorage.getItem('hc')||'[]');
+let LOANS = [];   // ALWAYS loaded from server, never from localStorage
+let PENDING = []; // ALWAYS loaded from server, never from localStorage
+let CU = null, CDP = null; // current user, current detail panel asset
+let afilt='', tfilt='', catfilt='', cfilt='', aTab='pending';
+
+// ── AUTH ───────────────────────────────────────────────
+const UK='hu2';
+const getU=()=>{try{return JSON.parse(localStorage.getItem(UK)||'[]');}catch(e){return[];}};
+const saveU=u=>localStorage.setItem(UK,JSON.stringify(u));
+function sh(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;}return h.toString(16);}
+
+function stab(t){
+  document.getElementById('lf').style.display=t==='login'?'':'none';
+  document.getElementById('rf').style.display=t==='reg'?'':'none';
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('on',i===(t==='login'?0:1)));
+}
+
+async function doLogin(){
+  const e=v('le'),p=v('lpass'),err=el('lerr');
+  if(!e||!p){se(err,'Isi email dan kata sandi.');return;}
+  setL('lbtn',true);
+  try{
+    // Try local first
+    const localUser=getU().find(x=>x.email===e&&x.pass===sh(p));
+    if(localUser){err.style.display='none';startApp(localUser);return;}
+    // Try Apps Script with plaintext password (cross-device sync)
+    try{
+      const r=await apost('login',{email:e,password:p});
+      if(r.ok){
+        // Save locally for offline access
+        const us=getU();
+        if(!us.find(x=>x.email===e)){us.push({...r.user,pass:sh(p)});saveU(us);}
+        err.style.display='none';startApp(r.user);return;
+      }
+      se(err,r.error||'Email atau kata sandi salah.');
+    }catch(ex2){se(err,'Email atau kata sandi salah.');}
+  }catch(ex){se(err,'Terjadi kesalahan. Coba lagi.');}
+  finally{setL('lbtn',false);}
+}
+
+async function doReg(){
+  const n=v('rn'),e=v('re'),p=v('rp');
+  const err=el('rerr'),ok=el('rok');
+  err.style.display='none';ok.style.display='none';
+  if(!n||!e||!p){se(err,'Isi semua field.');return;}
+  if(p.length<6){se(err,'Password min 6 karakter.');return;}
+  setL('rbtn',true);
+  try{
+    // Always save locally first
+    const us=getU();
+    if(us.find(x=>x.email===e)){se(err,'Email sudah terdaftar.');return;}
+    const newUser={name:n,email:e,pass:sh(p),role:e===APPROVAL_EMAIL?'admin':'user'};
+    us.push(newUser);saveU(us);
+    // Sync to Apps Script with plaintext (for cross-device login)
+    try{
+      const r=await apost('register',{name:n,email:e,password:p});
+      if(r.ok){toast('✓ Akun terdaftar di sistem','g');}
+    }catch(ex2){console.log('Sheet sync:',ex2);}
+    ok.textContent='Akun berhasil dibuat! Silakan masuk.';ok.style.display='block';
+    setTimeout(()=>stab('login'),1500);
+  }catch(ex){se(err,'Terjadi kesalahan: '+ex.message);}
+  finally{setL('rbtn',false);}
+}
+
+function doLogout(){
+  localStorage.removeItem('halo_sess');
+  el('app').classList.remove('on');el('lp').style.display='flex';
+  closeDD();CU=null;
+}
+
+function startApp(u){
+  CU=u;
+  el('lp').style.display='none';el('app').classList.add('on');
+  el('uname').textContent=u.name||u.email.split('@')[0];
+  el('uav').textContent=(u.name||u.email)[0].toUpperCase();
+  el('udd-name').textContent=u.name||'User';
+  el('udd-email').textContent=u.email||'';
+  el('sheet-link').href=SHEET_URL;
+  const isAdmin=u.role==='admin'||u.email===APPROVAL_EMAIL;
+  el('n-approval').style.display=isAdmin?'':'none';
+  localStorage.setItem('halo_sess',JSON.stringify(u));
+  loadAssets();renderCrew();updateBadges();
+  if(isAdmin)loadApprovals();
+  // Sync loan status on every login
+  setTimeout(syncAndRenderLoans, 2000);
+}
+
+window.onload=()=>{
+  const s=localStorage.getItem('halo_sess');
+  if(s){try{startApp(JSON.parse(s));}catch(e){}}
+};
+
+// ── API ─────────────────────────────────────────────────
+// ── API: JSONP to bypass CORS (Apps Script compatible) ──────
+function callJsonp(url) {
+  return new Promise((resolve, reject) => {
+    const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    const script = document.createElement('script');
+    const timer = setTimeout(() => {
+      cleanup(); reject(new Error('Timeout'));
+    }, 15000);
+    function cleanup() {
+      clearTimeout(timer);
+      delete window[cb];
+      script.remove();
+    }
+    window[cb] = (data) => { cleanup(); resolve(data); };
+    script.onerror = () => { cleanup(); reject(new Error('Script load error')); };
+    script.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + cb;
+    document.head.appendChild(script);
+  });
+}
+async function apost(action, body={}) {
+  const payload = JSON.stringify({...body, action, user:CU});
+  const url = APPS_URL + '?data=' + encodeURIComponent(payload);
+  const d = await callJsonp(url);
+  return normalizeResp(d);
+}
+async function aget(action, params={}) {
+  const payload = JSON.stringify({...params, action});
+  const url = APPS_URL + '?data=' + encodeURIComponent(payload);
+  const d = await callJsonp(url);
+  return normalizeResp(d);
+}
+function normalizeResp(d) {
+  if(!d) return {ok:false, error:'No response'};
+  if(d.status==='sukses') return {...d, ok:true};
+  if(d.status==='error')  return {...d, ok:false, error:d.message||d.error||'Error'};
+  return d;
+}
+
+// ── LOAD DATA ──────────────────────────────────────────
+async function loadAssets(){
+  el('rbtn2').innerHTML='<span class="spin"></span>';
+  try{
+    let assets;
+    // Always read directly from Google Sheet (public CSV) for reliability
+    // Apps Script is only used for writes (edit, check in/out, register)
+    try {
+      const r=await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Asset%20Master&t=${Date.now()}`);
+      if(!r.ok) throw new Error('Sheet fetch HTTP '+r.status);
+      assets=parseCSV(await r.text());
+    } catch(sheetErr) {
+      // Fallback to Apps Script if sheet fails
+      if(APPS_URL){const r=await aget('getAssets');assets=r.assets||[];}
+      else throw sheetErr;
+    }
+    DATA=assets;
+    el('stxt').textContent=`Live Sync · ${DATA.length} asset`;
+    updateKPI();renderTable();populateDL();
+    toast('✓ '+DATA.length+' asset dimuat','g');
+  }catch(e){
+    el('twrap').innerHTML=`<div class="empty"><div class="ei">⚠️</div><b>Gagal Terhubung</b><br><small>${e.message}</small><br><br><button class="ab ab-bl" onclick="loadAssets()" style="padding:7px 14px;border-radius:var(--r);font-family:var(--fb);font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;border:none;background:var(--ac);color:#fff">Coba Lagi</button></div>`;
+  }
+  el('rbtn2').textContent='↻ Refresh';
+}
+
+function parseCSV(t){
+  const l=t.split('\n'),h=pline(l[0]),r=[];
+  for(let i=1;i<l.length;i++){if(!l[i].trim())continue;const v=pline(l[i]);if(!v[2])continue;const o={};h.forEach((k,j)=>o[k.trim()]=v[j]?.trim()||'');r.push(o);}
+  return r;
+}
+function pline(l){const r=[],re=/("(?:[^"]|"")*"|[^,]*)(,|$)/g;let m;while((m=re.exec(l))!==null){r.push(m[1].startsWith('"')?m[1].slice(1,-1).replace(/""/g,'"'):m[1]);if(m[2]==='')break;}return r;}
+
+// field getters
+const gn=d=>d['Asset Name']||'—';
+const gh=d=>d['Health Status']||'—';
+const gp=d=>d['Operational Status']||'—';
+const gl=d=>d['Current Placement']||'—';
+const gt=d=>d['Team']||'—';
+const gs=d=>d['Section']||'—';
+const gc=d=>d['Internal Code']||'—';
+const gsn=d=>d['Serial Number / License']||'—';
+const ghr=d=>parseFloat(d['Hour / Cycle']||'0')||0;
+const gpic=d=>d['PIC']||'—';
+const gnm=d=>d['Next Maintenance']||'—';
+
+function isKantor(d){
+  const op=gp(d).toLowerCase(),loc=gl(d).toLowerCase();
+  return op==='active'||loc.includes('ranji')||loc.includes('office')||loc.includes('ppc')||loc.includes('kantor')||op==='di kantor';
+}
+
+// ── KPI ─────────────────────────────────────────────────
+function updateKPI(){
+  const t=DATA.length,off=DATA.filter(d=>isKantor(d)).length;
+  const site=DATA.filter(d=>!isKantor(d)&&(gp(d).includes('Project')||gp(d).includes('Site'))).length;
+  const good=DATA.filter(d=>gh(d)==='Good').length;
+  const maint=DATA.filter(d=>gh(d)==='Require Maintenance'||gh(d)==='Out of Commission').length;
+  el('k-t').textContent=t;el('k-s').textContent=[...new Set(DATA.map(d=>gs(d)).filter(Boolean))].length+' kategori';
+  el('k-o').textContent=off;el('k-st').textContent=site;
+  el('k-g').textContent=good;el('k-m').textContent=maint;
+}
+
+// ── FILTERS ─────────────────────────────────────────────
+function sf(f,btn){afilt=f;document.querySelectorAll('.card .chip').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderTable();}
+function ft(t){tfilt=t;document.querySelectorAll('[id^="ft-"]').forEach(b=>b.classList.remove('on'));el('ft-'+(t?t.replace(/[^a-z]/gi,'').slice(0,1).toLowerCase():''))?.classList.add('on');renderTable();}
+function fcat(c){catfilt=c;renderTable();}
+
+function getFiltered(){
+  const q=(el('si')?.value||'').toLowerCase(),mfr=el('fmfr')?.value||'';
+  return DATA.filter(d=>{
+    if(tfilt&&gt(d)!==tfilt)return false;
+    if(catfilt&&!gs(d).toLowerCase().includes(catfilt.toLowerCase()))return false;
+    if(mfr&&!gn(d).toLowerCase().includes(mfr.toLowerCase()))return false;
+    if(q&&!['Asset Name','Internal Code','Current Placement','PIC','Section','Team','Serial Number / License'].some(k=>(d[k]||'').toLowerCase().includes(q)))return false;
+    const h=gh(d);
+    if(afilt==='kantor'&&!isKantor(d))return false;
+    if(afilt==='site'&&isKantor(d))return false;
+    if(afilt==='good'&&h!=='Good')return false;
+    if(afilt==='maint'&&!h.includes('Require'))return false;
+    if(afilt==='ooc'&&!h.includes('Commission'))return false;
+    return true;
+  });
+}
+
+// ── TABLE ─────────────────────────────────────────────
+function renderTable(){
+  const fd=getFiltered();
+  if(!fd.length){el('twrap').innerHTML='<div class="empty"><div class="ei">🔍</div>Tidak ada aset yang cocok.</div>';return;}
+  const hBd=h=>{
+    if(!h||h==='—')return'<span class="bd bd-gy">—</span>';
+    if(h==='Good')return`<span class="bd bd-gr">Good</span>`;
+    if(h.includes('Out'))return'<span class="bd bd-rd">OOC</span>';
+    if(h.includes('Require'))return'<span class="bd bd-am">Req.Maint</span>';
+    if(h==='Demo Only')return`<span class="bd bd-bl">Demo</span>`;
+    return`<span class="bd bd-gy">${esc(h)}</span>`;
+  };
+  el('twrap').innerHTML=`<table><thead><tr><th>Aset</th><th>Tim</th><th>PIC</th><th>Lokasi</th><th>Kondisi</th><th>Jam / Maint</th><th></th></tr></thead><tbody>${
+    fd.slice(0,150).map(d=>{
+      const img=getImg(gn(d),gs(d));
+      const active=LOANS.find(l=>l.status==='active'&&l.assetName===gn(d));
+      const pend=PENDING.find(p=>p.status==='pending'&&(p['Asset Name']||p.assetName)===gn(d));
+      const hrs=ghr(d);
+      const warn=hrs>0&&hrs%MAINT_HRS>130;
+      const dj=JSON.stringify(d).replace(/"/g,'&quot;');
+      return`<tr style="cursor:pointer" onclick="openDP(${dj})">
+        <td><div class="ac-cell">
+          <div class="ac-thumb">${img?`<img src="${img}" onerror="this.style.display='none'">`:''}
+            <span style="font-size:15px;${img?'display:none':''}">${secIc(gs(d))}</span></div>
+          <div><div class="ac-name">${esc(gn(d))}</div><div class="ac-code">${esc(gc(d))}</div></div>
+        </div></td>
+        <td><span class="bd bd-bl" style="font-size:10px">${esc(gt(d))}</span></td>
+        <td style="color:var(--ink2);font-size:12px">${esc(gpic(d).split(',')[0].trim())}</td>
+        <td>${isKantor(d)?`<span class="loc-in">📍 ${esc(gl(d))}</span>`:`<span class="loc-out">🛫 ${esc(gl(d))}</span>`}
+          ${active?`<br><span class="bd bd-am" style="font-size:9px;margin-top:3px">📤 ${esc(active.borrower)}</span>`:''}
+          ${pend?`<br><span class="bd bd-pu" style="font-size:9px;margin-top:3px">⏳ Pending</span>`:''}
+        </td>
+        <td>${hBd(gh(d))}</td>
+        <td style="font-size:11px;color:var(--ink3)"><div>${hrs} jam</div><div>${esc(gnm(d))}</div>${warn?'<div style="color:var(--am);font-size:10px;font-weight:700">⚠️ Hampir maint</div>':''}</td>
+        <td><div class="abr">
+          <button class="ab" onclick="event.stopPropagation();openDP(${dj})">Detail</button>
+          <button class="ab ab-bl" onclick="event.stopPropagation();openEditM(${dj})">Edit</button>
+          ${!active&&!pend?`<button class="ab ab-gr" onclick="event.stopPropagation();quickCI('${esc(gn(d))}',${hrs})">Pinjam</button>`
+          :active?`<button class="ab ab-am" onclick="event.stopPropagation();openCO('${active.id}')">Kembalikan</button>`
+          :`<span class="bd bd-pu" style="font-size:10px">⏳</span>`}
+        </div></td>
+      </tr>`;
+    }).join('')
+  }</tbody></table>${fd.length>150?`<div style="text-align:center;padding:10px;font-size:12px;color:var(--ink3)">Menampilkan 150 dari ${fd.length}</div>`:''}`;
+}
+
+function secIc(s){const m={'Drone':'🚁','Dock':'🏠','Battery':'🔋','Camera':'📷','Sensor':'📷','Payload':'📷','GNSS':'📡','Laptop':'💻','Anti':'🛡️','Supporting':'🔧','Charger':'⚡'};for(const[k,i]of Object.entries(m)){if((s||'').includes(k))return i;}return'📦';}
+
+function getImg(name,sec){
+  const n=(name||'').toLowerCase();
+  const map=[['matrice 4t','https://store-cdn.dji.com/uploads/products/dji-matrice-4t/pictures/f31b8bd12fca9e5fccf3c0ca9e9af0cc.jpg'],['matrice 4e','https://store-cdn.dji.com/uploads/products/dji-matrice-4e/pictures/dji-matrice-4e-1.jpg'],['matrice 4d','https://store-cdn.dji.com/uploads/products/dji-matrice-4d/pictures/dji-matrice-4d-1.jpg'],['matrice 400','https://store-cdn.dji.com/uploads/products/dji-matrice-4t/pictures/f31b8bd12fca9e5fccf3c0ca9e9af0cc.jpg'],['matrice 350','https://store-cdn.dji.com/uploads/products/dji-matrice-350-rtk/pictures/dji-matrice-350-rtk-1.jpg'],['matrice 300','https://store-cdn.dji.com/uploads/products/matrice-300/pictures/matrice-300-rtk-1.jpg'],['matrice 30t','https://store-cdn.dji.com/uploads/products/dji-matrice-30-series/pictures/dji-matrice-30t-1.jpg'],['matrice 30','https://store-cdn.dji.com/uploads/products/dji-matrice-30-series/pictures/dji-matrice-30-1.jpg'],['flycart 100','https://store-cdn.dji.com/uploads/products/dji-flycart-100/pictures/dji-flycart-100-1.jpg'],['flycart 30','https://store-cdn.dji.com/uploads/products/dji-flycart-30/pictures/dji-flycart-30-1.jpg'],['mavic 3','https://store-cdn.dji.com/uploads/products/dji-mavic-3-enterprise/pictures/dji-mavic-3e-1.jpg'],['agras t50','https://store-cdn.dji.com/uploads/products/dji-agras-t50/pictures/dji-agras-t50-1.jpg'],['agras t40','https://store-cdn.dji.com/uploads/products/dji-agras-t40/pictures/dji-agras-t40-1.jpg'],['dock 3','https://store-cdn.dji.com/uploads/products/dji-dock-3/pictures/dji-dock-3-1.jpg'],['dock 2','https://store-cdn.dji.com/uploads/products/dji-dock-2/pictures/dji-dock-2-1.jpg'],['dock 1','https://store-cdn.dji.com/uploads/products/dji-dock/pictures/dji-dock-1.jpg'],['dock','https://store-cdn.dji.com/uploads/products/dji-dock-2/pictures/dji-dock-2-1.jpg'],['elios 3','https://www.flyability.com/wp-content/uploads/2022/09/Elios3_studio.png'],['elios 2','https://www.flyability.com/wp-content/uploads/2020/12/elios2.png'],['fifish','https://www.qysea.com/wp-content/uploads/2023/03/FIFISH-E-Go.jpg'],['emlid rs4','https://emlid.com/app/uploads/2023/11/RS4-hero.png'],['emlid rs3','https://emlid.com/app/uploads/2022/09/rs3.png'],['emlid rs2','https://emlid.com/app/uploads/2021/04/emlid-reach-rs2-plus.png'],['zenmuse h30','https://store-cdn.dji.com/uploads/products/dji-zenmuse-h30-series/pictures/dji-zenmuse-h30t-1.jpg'],['zenmuse l3','https://store-cdn.dji.com/uploads/products/dji-zenmuse-l3/pictures/dji-zenmuse-l3-1.jpg'],['zenmuse l2','https://store-cdn.dji.com/uploads/products/dji-zenmuse-l2/pictures/dji-zenmuse-l2-1.jpg'],['zenmuse l1','https://store-cdn.dji.com/uploads/products/dji-zenmuse-l1/pictures/dji-zenmuse-l1-1.jpg'],['zenmuse p1','https://store-cdn.dji.com/uploads/products/dji-zenmuse-p1/pictures/dji-zenmuse-p1-1.jpg'],['tb65','https://store-cdn.dji.com/uploads/products/tb65/pictures/tb65-1.jpg'],['tb100','https://store-cdn.dji.com/uploads/products/dji-matrice-4-series-intelligent-flight-battery/pictures/dji-matrice-4-intelligent-flight-battery-1.jpg'],['d-rtk 3','https://store-cdn.dji.com/uploads/products/dji-d-rtk-3/pictures/dji-d-rtk-3-1.jpg']];
+  for(const[k,u]of map){if(n.includes(k))return u;}
+  const s=(sec||'').toLowerCase();
+  if(s.includes('drone'))return'https://store-cdn.dji.com/uploads/products/dji-matrice-350-rtk/pictures/dji-matrice-350-rtk-1.jpg';
+  if(s.includes('dock'))return'https://store-cdn.dji.com/uploads/products/dji-dock-2/pictures/dji-dock-2-1.jpg';
+  if(s.includes('batter'))return'https://store-cdn.dji.com/uploads/products/tb65/pictures/tb65-1.jpg';
+  if(s.includes('gnss'))return'https://emlid.com/app/uploads/2023/11/RS4-hero.png';
+  return null;
+}
+
+// ── MAINTENANCE ────────────────────────────────────────
+function calcMaint(actDate, hrs){
+  let byDate=null,byHrs=null;
+  if(actDate){const d=new Date(actDate);if(!isNaN(d)){byDate=new Date(d);byDate.setMonth(byDate.getMonth()+MAINT_MONTHS);}}
+  if(hrs>0)byHrs=hrs+MAINT_HRS;
+  const str=byDate?`${MONTHS[byDate.getMonth()]} ${byDate.getFullYear().toString().slice(-2)}`:'';
+  return{str,byHrs,byDate};
+}
+
+function maintWarnTxt(name,hrs){
+  if(hrs>0&&hrs%MAINT_HRS>130){const rem=MAINT_HRS-(hrs%MAINT_HRS);return`${name} hampir maintenance — ${rem} jam lagi menuju ${MAINT_HRS} jam`;}
+  if(hrs>0&&hrs%MAINT_HRS===0&&hrs>0)return`${name} sudah mencapai interval ${MAINT_HRS} jam — perlu maintenance!`;
+  return'';
+}
+
+function previewMaint(){
+  const hrs=parseFloat(el('edit-hr').value)||0;
+  const d=DATA.find(x=>gn(x)===el('edit-name').value);
+  const m=calcMaint(d?.['Activation Date']||'',hrs);
+  if(m.str)el('edit-maint').value=m.str;
+  const w=maintWarnTxt(el('edit-name').value,hrs);
+  el('edit-mwarn').style.display=w?'flex':'none';
+  if(w)el('edit-mwarn-msg').textContent=w;
+}
+
+function calcCOtotal(){
+  const bef=parseFloat(el('co-hrbef').value)||0;
+  const add=parseFloat(el('co-hradd').value)||0;
+  const tot=bef+add;
+  el('co-total').textContent=tot+' jam';
+  const d=DATA.find(x=>gn(x)===(el('co-sub').dataset.asset||''));
+  const m=calcMaint(d?.['Activation Date']||'',tot);
+  el('co-mnxt').textContent=m.str?`Next maintenance: ${m.str} atau ${m.byHrs} jam (mana yang lebih dulu)`:'';
+  el('co-total-wrap').style.display='';
+}
+
+// ── DETAIL PANEL ────────────────────────────────────────
+function openDP(d){
+  CDP=d;
+  const img=getImg(gn(d),gs(d));
+  const ie=el('dp-img'),pe=el('dp-ph');
+  if(img){ie.src=img;ie.style.display='';pe.style.display='none';}else{ie.style.display='none';pe.style.display='flex';}
+  el('dp-name').textContent=gn(d);el('dp-code').textContent=gc(d)+' · '+gs(d);
+  const hc=gh(d)==='Good'?'var(--gr)':gh(d).includes('Out')?'var(--rd)':'var(--am)';
+  const hrs=ghr(d);
+  const m=calcMaint(d['Activation Date'],hrs);
+  el('dp-bds').innerHTML=`<span class="bd bd-bl">${esc(gt(d))}</span><span class="bd" style="background:${hc}18;color:${hc};font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px">${esc(gh(d))}</span><span class="${isKantor(d)?'loc-in':'loc-out'}">${isKantor(d)?'📍 Di Kantor':'🛫 Di Site'}</span>`;
+  const mwStr=maintWarnTxt(gn(d),hrs);
+  el('dp-body').innerHTML=`
+    <div class="dp-sec"><div class="dp-sec-t">Info Utama</div><div class="dp-g">
+      <div class="df"><div class="dl">PIC</div><div class="dv">${esc(gpic(d).split(',')[0].trim())}</div></div>
+      <div class="df"><div class="dl">Ops Status</div><div class="dv">${esc(gp(d))}</div></div>
+      <div class="df"><div class="dl">Lokasi</div><div class="dv">${esc(gl(d))}</div></div>
+      <div class="df"><div class="dl">Flight Hours</div><div class="dv" style="font-weight:700">${hrs} jam</div></div>
+      <div class="df"><div class="dl">Next Maintenance</div><div class="dv" style="${gnm(d).toLowerCase().includes('overdue')?'color:var(--rd);font-weight:700':''}">${esc(gnm(d))}</div></div>
+      <div class="df"><div class="dl">Activation Date</div><div class="dv">${esc(d['Activation Date']||'—')}</div></div>
+    </div>
+    ${m.byHrs?`<div class="mwarn" style="margin-top:8px">🔧 Next maint: <b>${m.str}</b> atau <b>${m.byHrs} jam</b> (mana lebih dulu)</div>`:''}
+    ${mwStr?`<div class="mwarn" style="margin-top:6px">⚠️ ${esc(mwStr)}</div>`:''}
+    </div>
+    <div class="dp-sec"><div class="dp-sec-t">Teknis</div><div class="dp-g">
+      <div class="df" style="grid-column:1/-1"><div class="dl">Serial Number</div><div class="dv" style="font-family:var(--fm);font-size:11px">${esc(gsn(d))}</div></div>
+      <div class="df"><div class="dl">Firmware</div><div class="dv ${!d.Firmware?'em':''}">${esc(d.Firmware||'—')}</div></div>
+      <div class="df"><div class="dl">FCC Status</div><div class="dv">${esc(d['FCC Status']||'—')}</div></div>
+      <div class="df"><div class="dl">Expired Date</div><div class="dv">${esc(d['Expired Date']||'—')}</div></div>
+      <div class="df"><div class="dl">Item ID</div><div class="dv em" style="font-size:10px;font-family:var(--fm)">${esc(d['Item ID']||'—')}</div></div>
+    </div></div>
+    ${d.Sertifikat||d['Maintenance Record Link']?`<div class="dp-sec"><div class="dp-sec-t">Dokumen</div>
+      ${d.Sertifikat?`<a href="${d.Sertifikat}" target="_blank" style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg);border:1px solid var(--bdr);border-radius:var(--r);color:var(--ac);text-decoration:none;font-size:12px;font-weight:600;margin-bottom:6px">📄 Sertifikat →</a>`:''}
+      ${d['Maintenance Record Link']?`<a href="${d['Maintenance Record Link']}" target="_blank" style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg);border:1px solid var(--bdr);border-radius:var(--r);color:var(--ac);text-decoration:none;font-size:12px;font-weight:600">🔧 Maintenance Record →</a>`:''}
+    </div>`:''}`;
+  const active=LOANS.find(l=>l.status==='active'&&l.assetName===gn(d));
+  el('dp-act').innerHTML=`<button class="dp-btn dp-edit" onclick="openEditM(CDP)">✏️ Edit</button>${active?`<button class="dp-btn dp-ret" onclick="openCO('${active.id}')">📥 Kembalikan</button>`:`<button class="dp-btn dp-loan" onclick="quickCI('${esc(gn(d))}',${hrs})">📤 Pinjam</button>`}`;
+  el('dp').classList.add('on');
+}
+function closeDP(){el('dp').classList.remove('on');}
+
+// ── EDIT ASSET ─────────────────────────────────────────
+function openEditM(d){
+  if(!d){toast('Data tidak ditemukan','r');return;}CDP=d;
+  el('edit-sub').textContent='Edit: '+gn(d);
+  el('edit-name').value=gn(d);el('edit-code').value=gc(d);
+  el('edit-hs').value=gh(d)||'Good';el('edit-os').value=gp(d)||'Active';
+  el('edit-loc').value=gl(d);el('edit-hr').value=ghr(d);
+  el('edit-maint').value=gnm(d);el('edit-pic').value=gpic(d);
+  el('edit-fw').value=d.Firmware||'';el('edit-mwarn').style.display='none';
+  openM('m-edit');
+}
+
+async function doEditAsset(){
+  const name=el('edit-name').value,code=el('edit-code').value;
+  if(!name){toast('Asset tidak ditemukan','r');return;}
+  const hrs=parseFloat(el('edit-hr').value)||0;
+  const d=DATA.find(x=>gn(x)===name);
+  const m=calcMaint(d?.['Activation Date']||'',hrs);
+  const changes={'Health Status':el('edit-hs').value,'Operational Status':el('edit-os').value,'Current Placement':v('edit-loc'),'Hour / Cycle':v('edit-hr'),'Next Maintenance':v('edit-maint')||m.str,'PIC':v('edit-pic'),'Firmware':v('edit-fw')};
+  // Remove empty/unchanged
+  Object.keys(changes).forEach(k=>{if(!changes[k]||(d&&d[k]===changes[k]))delete changes[k];});
+  if(!Object.keys(changes).length){toast('Tidak ada perubahan','am');closeM('m-edit');return;}
+  setL('edit-btn',true);
+  try{
+    // Save locally first (instant)
+    if(d)Object.assign(d,changes);
+    closeM('m-edit');
+    if(el('dp').classList.contains('on')&&CDP)openDP(d||CDP);
+    updateKPI();renderTable();toast('✓ Asset diupdate','g');
+    // Sync to Sheet Master
+    apost('editAsset',{assetName:name,assetCode:code,changes}).then(r=>{
+      if(r.ok)toast('✓ Sheet Master diupdate','g');
+      else toast('⚠ Update lokal OK — sheet sync gagal','am');
+    }).catch(()=>{toast('⚠ Update lokal OK — sheet sync gagal','am');});
+  }catch(ex){toast('Error: '+ex.message,'r');}
+  finally{setL('edit-btn',false);}
+}
+
+// ── ADD ASSET ──────────────────────────────────────────
+async function doAddAsset(){
+  const name=v('aa-name');if(!name){toast('Isi nama asset','r');return;}
+  const hrs=parseFloat(v('aa-hr'))||0,act=v('aa-act');
+  const m=calcMaint(act,hrs);
+  const nd={'Asset Name':name,'Section':el('aa-sec').value,'Health Status':el('aa-hs').value,'Team':el('aa-team').value,'PIC':v('aa-pic'),'Internal Code':v('aa-code'),'Serial Number / License':v('aa-sn'),'Current Placement':v('aa-loc'),'Operational Status':'Active','Activation Date':act,'Hour / Cycle':v('aa-hr')||'0','Next Maintenance':m.str};
+  setL('aa-btn',true);
+  try{
+    DATA.unshift(nd);updateKPI();renderTable();populateDL();
+    closeM('m-add');toast('✓ Asset ditambahkan','g');
+    ['aa-name','aa-code','aa-sn','aa-pic','aa-loc','aa-act'].forEach(id=>el(id).value='');
+    el('aa-hr').value='0';
+    // Sync to Sheet Master
+    apost('addAsset',{assetData:nd}).then(r=>{
+      if(r.ok)toast('✓ Asset tersimpan ke Sheet Master','g');
+    }).catch(()=>{});
+  }catch(ex){toast('Error: '+ex.message,'r');}
+  finally{setL('aa-btn',false);}
+}
+
+// ── CHECK IN ───────────────────────────────────────────
+function populateDL(){
+  const actv=LOANS.filter(l=>l.status==='active').map(l=>l.assetName);
+  el('asset-dl').innerHTML=DATA.filter(d=>!actv.includes(gn(d))).map(d=>`<option value="${esc(gn(d))}">${esc(gn(d))} (${esc(gc(d))})</option>`).join('');
+}
+
+function quickCI(name,hrs){
+  el('ci-asset').value=name;el('ci-hrbef').value=hrs;
+  if(CU){el('ci-name').value=CU.name||'';el('ci-email').value=CU.email||'';}
+  const w=maintWarnTxt(name,hrs);
+  el('ci-mwarn').style.display=w?'flex':'none';if(w)el('ci-mwarn-msg').textContent=w;
+  openM('m-ci');
+}
+
+el('ci-asset')?.addEventListener('input',e=>{
+  const d=DATA.find(x=>gn(x)===e.target.value);
+  if(d){el('ci-hrbef').value=ghr(d);const w=maintWarnTxt(gn(d),ghr(d));el('ci-mwarn').style.display=w?'flex':'none';if(w)el('ci-mwarn-msg').textContent=w;}
+});
+
+async function doCheckIn(){
+  const asset=v('ci-asset'),borrower=v('ci-name'),email=v('ci-email'),dest=v('ci-dest');
+  if(!asset||!borrower||!dest){toast('Isi nama aset, peminjam, dan lokasi tujuan','r');return;}
+  const d=DATA.find(x=>gn(x).toLowerCase()===asset.toLowerCase());
+  if(!d){toast('Aset tidak ditemukan','r');return;}
+  if(LOANS.find(l=>l.status==='active'&&l.assetName===gn(d))){toast('Aset sedang dipinjam!','r');return;}
+  if(PENDING.find(p=>p.status==='pending'&&(p['Asset Name']||p.assetName)===gn(d))){toast('Sudah ada permintaan pending untuk aset ini!','r');return;}
+  const payload={assetName:gn(d),assetCode:gc(d),borrower,email,team:el('ci-team').value,project:v('ci-proj'),destination:dest,estReturn:v('ci-ret'),flightHoursBefore:ghr(d),flightHoursAdd:v('ci-hradd')||'0',personnel:v('ci-pers'),notes:v('ci-notes')};
+  setL('ci-btn',true);
+  try{
+    // Submit ke server dulu, baru update UI
+    setL('ci-btn',true);
+    const r=await apost('submitCheckIn',payload);
+    if(!r.ok){toast('⚠ Gagal kirim: '+(r.error||'Cek koneksi'),'r');return;}
+    toast('✓ Permintaan Check In dikirim — menunggu approval manager','g');
+    closeM('m-ci');
+    ['ci-asset','ci-name','ci-email','ci-proj','ci-dest','ci-ret','ci-hradd','ci-pers','ci-notes'].forEach(id=>el(id).value='');
+    // Sync dari server agar semua device update
+    await syncAndRenderLoans();
+    renderTable();updateBadges();
+    navTo('loan');setLT('pending',document.querySelectorAll('#p-loan .ltab')[1]);
+  }catch(ex){toast('Error: '+ex.message,'r');}finally{setL('ci-btn',false);}
+}
+
+// ── CHECK OUT ──────────────────────────────────────────
+function openCO(lid){
+  const l=LOANS.find(x=>x.id===lid);if(!l)return;
+  el('co-sub').textContent=`Mengembalikan: ${l.assetName} — dipinjam oleh ${l.borrower}`;
+  el('co-sub').dataset.asset=l.assetName;el('co-lid').value=lid;
+  el('co-loc').value=l.prevLoc||'Office OPS';el('co-hrbef').value=l.hrsBefore||'0';
+  el('co-curhrs').value=l.hrsBefore||'0';el('co-health').value='Good';
+  el('co-hradd').value='';el('co-total-wrap').style.display='none';
+  openM('m-co');
+}
+
+async function doCheckOut(){
+  const lid=el('co-lid').value;const l=LOANS.find(x=>x.id===lid);
+  const hrsBef=parseFloat(el('co-hrbef').value)||0,hrsAdd=parseFloat(v('co-hradd'))||0,tot=hrsBef+hrsAdd;
+  const payload={checkInId:lid,assetName:l?.assetName||'',assetCode:l?.assetCode||'',borrower:l?.borrower||'',email:l?.email||'',team:l?.team||'',flightHoursBefore:hrsBef,flightHoursAdd:hrsAdd,condition:el('co-health').value,returnLocation:v('co-loc'),notes:v('co-notes')};
+  try{
+    // Submit ke server dulu
+    const r=await apost('submitCheckOut',payload);
+    if(!r.ok){toast('⚠ Gagal kirim: '+(r.error||'Cek koneksi'),'r');return;}
+    closeM('m-co');toast('✓ Permintaan Check Out dikirim untuk approval','g');
+    // Sync dari server agar semua device update
+    await syncAndRenderLoans();
+    updateBadges();
+  }catch(ex){toast('Error: '+ex.message,'r');}
+}
+
+// ── APPROVAL ───────────────────────────────────────────
+async function loadApprovals(){
+  try{
+    const r=await aget('getPending',{status:'all'});
+    if(r.ok && r.pending){
+      // Server is SOLE source of truth — replace entirely
+      PENDING = r.pending.map(p=>({
+        ...p,
+        id: p.ID||p.id,
+        status: (p.Status||p.status||'pending').toLowerCase(),
+        'Asset Name': p['Asset Name']||p.assetName||'',
+        'Tipe': p['Tipe']||p.tipe||'CHECK_IN',
+        'Peminjam': p['Peminjam']||p.borrower||'',
+        'Tim': p['Tim']||p.team||'',
+        'Lokasi Tujuan': p['Lokasi Tujuan']||p.destination||'',
+        'Est Kembali': p['Est Kembali']||p.estReturn||'',
+        'Flight Hours Sebelum': p['Flight Hours Sebelum']||p.flightHoursBefore||'0',
+        'Flight Hours Tambah': p['Flight Hours Tambah']||p.flightHoursAdd||'0',
+        'Personil Terlibat': p['Personil Terlibat']||p.personnel||'',
+        'Kegiatan': p['Kegiatan']||p.project||'',
+        'Catatan': p['Catatan']||p.notes||'',
+        'Submitted At': p['Submitted At']||p.submittedAt||''
+      }));
+    }
+  }catch(e){console.log('Approval sync error:',e);}
+  renderApproval();updateBadges();
+}
+
+function setAT(tab,btn){aTab=tab;document.querySelectorAll('#p-approval .ltab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderApproval();}
+
+function renderApproval(){
+  const pd=PENDING.filter(p=>p.status==='pending').length;
+  const ap=PENDING.filter(p=>p.status==='approved').length;
+  const rj=PENDING.filter(p=>p.status==='rejected').length;
+  el('at-pd').textContent=pd;el('at-ap').textContent=ap;el('at-rj').textContent=rj;
+  const filtered=PENDING.filter(p=>p.status===aTab);
+  if(!filtered.length){el('approval-list').innerHTML=`<div class="empty" style="margin:0 22px"><div class="ei">${aTab==='pending'?'⏳':aTab==='approved'?'✅':'❌'}</div>Tidak ada permintaan ${aTab}.</div>`;return;}
+  el('approval-list').innerHTML=[...filtered].reverse().map(p=>{
+    const isCI=p.Tipe==='CHECK_IN'||p.tipe==='CHECK_IN';
+    const name=p['Asset Name']||p.assetName||'—';
+    const borrower=p.Peminjam||p.borrower||'—';
+    const team=p.Tim||p.team||'—';
+    const dest=p['Lokasi Tujuan']||p.destination||'—';
+    const hrs=p['Flight Hours Tambah']||p.flightHoursAdd||'0';
+    const pers=p['Personil Terlibat']||p.personnel||'—';
+    const ts=p['Submitted At']||'';
+    const id=p.id||p.ID||'';
+    const isPend=p.status==='pending';
+    return`<div class="pcard">
+      <div class="pcard-top">
+        <span class="bd ${isCI?'bd-bl':'bd-gr'}">${isCI?'📤 Check In':'📥 Check Out'}</span>
+        <div><div class="pcard-name">${esc(name)}</div><div class="pcard-meta">Oleh <b>${esc(borrower)}</b> · ${esc(team)}</div></div>
+        <div class="pcard-ts">${ts?new Date(ts).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):''}</div>
+      </div>
+      <div class="pcard-det">
+        <div><div class="pdl">Lokasi</div><div class="pdv">${esc(dest)}</div></div>
+        <div><div class="pdl">Flight Hrs +</div><div class="pdv">${esc(hrs)} jam</div></div>
+        <div><div class="pdl">Personil</div><div class="pdv">${esc(pers)}</div></div>
+        <div><div class="pdl">Kegiatan</div><div class="pdv">${esc(p.Kegiatan||p.project||'—')}</div></div>
+        <div><div class="pdl">Est. Kembali</div><div class="pdv">${esc(p['Est Kembali']||p.estReturn||'—')}</div></div>
+        <div><div class="pdl">Catatan</div><div class="pdv">${esc(p.Catatan||p.notes||'—')}</div></div>
+      </div>
+      ${isPend?`<div class="pcard-act">
+        <button class="pa pa-ok" onclick="doApprove('${esc(id)}')">✓ Setujui</button>
+        <button class="pa pa-no" onclick="openRej('${esc(id)}','${esc(name)}')">✕ Tolak</button>
+      </div>`:`<div style="font-size:11px;color:${p.status==='approved'?'var(--gr)':'var(--rd)'};font-weight:700">${p.status==='approved'?'✅':'❌'} ${p.status==='approved'?'Disetujui':'Ditolak'}${p['Approved By']?' oleh '+esc(p['Approved By']):''}</div>`}
+    </div>`;
+  }).join('');
+}
+
+async function doApprove(id){
+  const p=PENDING.find(x=>(x.id||x.ID)===id);if(!p){toast('Tidak ditemukan','r');return;}
+  try{
+    // Save locally first
+    p.status='approved';p['Approved By']=CU?.name||'Admin';p['Approved At']=new Date().toISOString();
+    const isCI=p.Tipe==='CHECK_IN',aname=p['Asset Name']||p.assetName;
+    const d=DATA.find(x=>gn(x)===aname);
+    if(isCI){
+      LOANS.push({id:'L'+Date.now(),assetName:aname,assetCode:p['Asset Code']||p.assetCode||'',borrower:p.Peminjam||p.borrower,email:p.Email||p.email||'',team:p.Tim||p.team,project:p.Kegiatan||p.project,destination:p['Lokasi Tujuan']||p.destination,returnDate:p['Est Kembali']||p.estReturn||null,hrsBefore:parseFloat(p['Flight Hours Sebelum']||p.flightHoursBefore)||0,prevLoc:d?gl(d):'',prevOps:d?gp(d):'Active',status:'active',checkinAt:new Date().toISOString()});
+      if(d){d['Operational Status']='Project Use';d['Current Placement']=p['Lokasi Tujuan']||p.destination||'';}
+    }else{
+      const li=LOANS.findIndex(l=>l.status==='active'&&l.assetName===aname);
+      if(li>=0){LOANS[li].status='returned';LOANS[li].checkoutAt=new Date().toISOString();}
+    }
+    // Update server first — server is source of truth
+    const arResult = await apost('approveRequest',{requestId:id,approverEmail:CU?.email,approverName:CU?.name});
+    if(!arResult.ok){toast('⚠ Server error: '+(arResult.error||'Gagal update sheet'),'r');return;}
+    toast('✓ Disetujui — sheet terupdate & email terkirim','g');
+    // Re-sync seluruh data dari server
+    await loadApprovals();
+    await syncAndRenderLoans();
+    updateKPI();renderTable();updateBadges();
+  }catch(ex){toast('Error: '+ex.message,'r');}
+}
+
+function openRej(id,name){el('rej-id').value=id;el('rej-sub').textContent='Tolak permintaan untuk: '+name;el('rej-reason').value='';openM('m-rej');}
+
+async function doReject(){
+  const id=v('rej-id'),reason=v('rej-reason');if(!reason){toast('Tulis alasan','r');return;}
+  try{
+    const rr=await apost('rejectRequest',{requestId:id,reason,approverEmail:CU?.email,approverName:CU?.name});
+    if(!rr.ok){toast('⚠ Server error: '+(rr.error||'Gagal update'),'r');return;}
+    closeM('m-rej');
+    await loadApprovals();
+    updateBadges();toast('Permintaan ditolak','am');
+  }catch(ex){toast('Error: '+ex.message,'r');}
+}
+
+// ── LOAN LIST ──────────────────────────────────────────
+function setLT(tab,btn){
+  document.querySelectorAll('#p-loan .ltab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  el('wrap-active').style.display=tab==='active'?'':'none';
+  el('wrap-pending').style.display=tab==='pending'?'':'none';
+  el('wrap-history').style.display=tab==='history'?'':'none';
+  renderLoanAll();
+}
+
+function updateBadges(){
+  const ac=LOANS.filter(l=>l.status==='active').length;
+  const pd=PENDING.filter(p=>p.status==='pending').length;
+  const now=new Date();
+  const ov=LOANS.filter(l=>l.status==='active'&&l.returnDate&&new Date(l.returnDate)<now).length;
+  el('lk-ac').textContent=ac;el('lk-rt').textContent=LOANS.filter(l=>l.status==='returned').length;el('lk-ov').textContent=ov;
+  el('lt-ac').textContent=ac;el('lt-pd').textContent=pd;el('lt-hc').textContent=LOANS.filter(l=>l.status==='returned').length;
+  el('lb-wrap').style.display=ac>0?'':'none';el('lb-cnt').textContent=ac;
+  el('ab-wrap').style.display=pd>0?'':'none';el('ab-cnt').textContent=pd;
+}
+
+function renderLoanAll(){updateBadges();renderActiveLoans();renderPendingLoans();renderHistLoans();}
+
+function renderActiveLoans(){
+  const ac=LOANS.filter(l=>l.status==='active').reverse();const now=new Date();
+  if(!ac.length){el('active-loans').innerHTML='<div class="empty" style="margin:0 22px"><div class="ei">✅</div>Tidak ada peminjaman aktif.</div>';return;}
+  el('active-loans').innerHTML=ac.map(l=>{
+    const d=DATA.find(x=>gn(x)===l.assetName);const img=d?getImg(gn(d),gs(d)):null;
+    const due=l.returnDate?new Date(l.returnDate):null;const ov=due&&due<now;
+    return`<div class="lc">
+      <div class="lc-top">
+        <div class="lc-thumb">${img?`<img src="${img}" onerror="this.style.display='none'">`:'<span style="font-size:20px">📦</span>'}</div>
+        <div style="flex:1;min-width:0"><div class="lc-name">${esc(l.assetName)}</div><div class="lc-code">${esc(l.assetCode||'—')}</div>
+          ${due?`<div style="font-size:11px;font-weight:700;color:${ov?'var(--rd)':'var(--am)'};margin-top:2px">${ov?'⚠️ Overdue':'📅 Kembali:'} ${due.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}</div>`:''}
+        </div>
+        <div style="text-align:right;font-size:11px;color:var(--ink3)"><div>📤 ${new Date(l.checkinAt).toLocaleDateString('id-ID',{day:'numeric',month:'short'})}</div><div>Jam sebelum: ${l.hrsBefore||0} jam</div></div>
+      </div>
+      <div class="lc-meta"><span class="bd bd-bl">${esc(l.team||'—')}</span><span class="bd bd-gy">👤 ${esc(l.borrower)}</span><span class="bd bd-gy">📍 ${esc(l.destination)}</span>${l.project?`<span class="bd bd-gy">🚀 ${esc(l.project)}</span>`:''}</div>
+      <div class="lc-act"><button class="lc-btn lc-ret" onclick="openCO('${l.id}')">📥 Check Out (Kembalikan)</button></div>
+    </div>`;
+  }).join('');
+}
+
+function renderPendingLoans(){
+  const pd=PENDING.filter(p=>p.status==='pending');
+  if(!pd.length){el('pending-loans').innerHTML='<div class="empty" style="margin:0 22px"><div class="ei">⏳</div>Tidak ada permintaan pending.</div>';return;}
+  el('pending-loans').innerHTML=pd.map(p=>{
+    const isCI=p.Tipe==='CHECK_IN';const name=p['Asset Name']||p.assetName||'—';
+    return`<div class="lc" style="border-color:var(--ambd);background:var(--ambg);margin:0 22px 10px">
+      <div class="lc-top"><div style="flex:1"><div class="lc-name">⏳ ${isCI?'Check In':'Check Out'} Pending Approval</div><div class="lc-code">${esc(name)}</div></div>
+        <div style="font-size:11px;color:var(--ink3)">${new Date(p['Submitted At']||'').toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+      <div class="lc-meta"><span class="bd bd-gy">👤 ${esc(p.Peminjam||p.borrower||'—')}</span><span class="bd bd-gy">📍 ${esc(p['Lokasi Tujuan']||p.destination||'—')}</span></div>
+      <div style="font-size:11px;color:var(--am);font-weight:600">Menunggu approval — notifikasi dikirim ke ${APPROVAL_EMAIL}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderHistLoans(){
+  const hist=LOANS.filter(l=>l.status==='returned').reverse();
+  if(!hist.length){el('hist-loans').innerHTML='<div class="empty"><div class="ei">📋</div>Belum ada riwayat.</div>';return;}
+  el('hist-loans').innerHTML=hist.map(l=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--bdr);font-size:12px">
+      <div style="flex:2;min-width:0"><div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(l.assetName)}</div><div style="font-family:var(--fm);font-size:10px;color:var(--ink3)">${esc(l.assetCode||'—')}</div></div>
+      <div style="flex:3;display:flex;gap:10px;flex-wrap:wrap;color:var(--ink3)"><span>👤 ${esc(l.borrower)}</span><span class="bd bd-bl" style="font-size:10px">${esc(l.team||'—')}</span><span>📍 ${esc(l.destination)}</span><span>📤 ${new Date(l.checkinAt).toLocaleDateString('id-ID',{day:'2-digit',month:'short'})}</span>${l.checkoutAt?`<span>📥 ${new Date(l.checkoutAt).toLocaleDateString('id-ID',{day:'2-digit',month:'short'})}</span>`:''}</div>
+      <span class="bd bd-gr">✓ Dikembalikan</span>
+    </div>`).join('');
+}
+
+// ── CREW ───────────────────────────────────────────────
+function scf(f,btn){cfilt=f;document.querySelectorAll('#p-crew .chip').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderCrew();}
+function renderCrew(){
+  const tc={'Inspection':'#f59e0b','Security & ICT':'#6c63ff','Mapping':'#22c55e','Delivery':'#ec4899','Spraying':'#10b981','Projects':'#3b82f6','Training':'#94a3b8'};
+  const sm={'Tersedia (Ready)':{c:'var(--gr)',bg:'var(--grbg)',l:'✅ Tersedia'},'Sedang Bertugas':{c:'var(--am)',bg:'var(--ambg)',l:'🛫 Bertugas'},'Cuti / Off':{c:'var(--ink3)',bg:'var(--bg)',l:'💤 Off'}};
+  let crew=CREW;
+  if(cfilt==='ready')crew=crew.filter(c=>c.status==='Tersedia (Ready)');
+  if(cfilt==='duty')crew=crew.filter(c=>c.status==='Sedang Bertugas');
+  if(cfilt==='off')crew=crew.filter(c=>c.status==='Cuti / Off');
+  if(!crew.length){el('cgrid').innerHTML='<div class="empty" style="grid-column:1/-1"><div class="ei">👥</div>Belum ada personil.</div>';return;}
+  el('cgrid').innerHTML=crew.map(x=>{const st=sm[x.status]||sm['Tersedia (Ready)'];const col=tc[x.team]||'#94a3b8';const sk=(x.skills||'').split(',').map(s=>s.trim()).filter(Boolean);
+    return`<div class="cc"><div class="cc-av" style="background:${col}18;color:${col}">${(x.name||'?')[0].toUpperCase()}</div><div class="cc-name">${esc(x.name)}</div><div class="cc-team">${esc(x.team)}${x.base?' · '+esc(x.base):''}</div><div style="margin-bottom:8px"><span class="bd" style="background:${st.bg};color:${st.c};font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px">${st.l}</span></div><div style="display:flex;flex-wrap:wrap;gap:3px">${sk.slice(0,4).map(s=>`<span class="bd bd-gy" style="font-size:9px">${esc(s)}</span>`).join('')}</div>${x.phone?`<div style="font-size:11px;color:var(--ink3);margin-top:8px">📱 ${esc(x.phone)}</div>`:''}</div>`;
+  }).join('');
+}
+function doAddCrew(){const n=v('cn');if(!n){toast('Isi nama','r');return;}CREW.push({name:n,team:el('ct').value,status:el('cs').value,phone:v('cp'),base:v('cb'),skills:v('ck')});localStorage.setItem('hc',JSON.stringify(CREW));closeM('m-crew');renderCrew();toast('✓ Personil ditambahkan','g');['cn','cp','cb','ck'].forEach(id=>el(id).value='');}
+
+// ── NAV ────────────────────────────────────────────────
+function navTo(p){
+  document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.tn').forEach(x=>x.classList.remove('on'));
+  el('p-'+p).classList.add('on');el('n-'+p).classList.add('on');
+  if(p==='loan'){syncAndRenderLoans();}
+  if(p==='crew')renderCrew();
+  if(p==='approval')loadApprovals();
+}
+
+async function syncAndRenderLoans(){
+  // Sync PENUH dari server — tidak bergantung localStorage lokal
+  try{
+    const r=await aget('getPending',{status:'all'});
+    if(r.ok && r.pending){
+      // Replace PENDING sepenuhnya dengan data server
+      PENDING = r.pending.map(sp=>({
+        ...sp,
+        id: sp.ID||sp.id,
+        status: sp.Status||sp.status||'pending',
+        'Asset Name': sp['Asset Name']||sp.assetName||'',
+        'Tipe': sp['Tipe']||sp.tipe||'CHECK_IN',
+        'Peminjam': sp['Peminjam']||sp.borrower||CU.name||'',
+        'Tim': sp['Tim']||sp.team||'',
+        'Lokasi Tujuan': sp['Lokasi Tujuan']||sp.destination||'',
+        'Kegiatan': sp['Kegiatan']||sp.project||'',
+        'Est Kembali': sp['Est Kembali']||sp.estReturn||'',
+        'Flight Hours Sebelum': sp['Flight Hours Sebelum']||sp.flightHoursBefore||'0',
+        'Flight Hours Tambah': sp['Flight Hours Tambah']||sp.flightHoursAdd||'0',
+        'Submitted At': sp['Submitted At']||sp.submittedAt||''
+      }));
+
+      // Rebuild LOANS dari data approved
+      const approvedCI = PENDING.filter(p=>
+        (p.status||'').toString().toLowerCase()==='approved' &&
+        (p.Tipe||p.tipe||p['Tipe']||'').toString().toUpperCase()==='CHECK_IN'
+      );
+      approvedCI.forEach(sp=>{
+        const aname = sp['Asset Name']||sp.assetName||'';
+        // Tambahkan ke LOANS kalau belum ada
+        if(!LOANS.find(l=>l.status==='active'&&l.assetName===aname)){
+          LOANS.push({
+            id: 'L'+(sp.id||Date.now()),
+            assetName: aname,
+            assetCode: sp['Asset Code']||sp.assetCode||'',
+            borrower: sp['Peminjam']||sp.borrower||'',
+            email: sp['Email']||sp.email||'',
+            team: sp['Tim']||sp.team||'',
+            project: sp['Kegiatan']||sp.project||'',
+            destination: sp['Lokasi Tujuan']||sp.destination||'',
+            returnDate: sp['Est Kembali']||sp.estReturn||null,
+            hrsBefore: parseFloat(sp['Flight Hours Sebelum']||sp.flightHoursBefore)||0,
+            prevLoc:'', status:'active',
+            checkinAt: sp['Approved At']||sp['Submitted At']||new Date().toISOString()
+          });
+        }
+      });
+
+    }
+  }catch(e){console.log('Sync error:',e);}
+  renderLoanAll();
+}
+
+// ── USER DD ────────────────────────────────────────────
+function toggleDD(){el('udd').classList.toggle('on');}
+function closeDD(){el('udd').classList.remove('on');}
+document.addEventListener('click',e=>{if(!el('ubtn').contains(e.target)&&!el('udd').contains(e.target))closeDD();});
+
+// ── EXPORT ─────────────────────────────────────────────
+function exportCSV(){
+  const cols=['No','Section','Asset Name','Team','PIC','Internal Code','Serial Number / License','Activation Date','Hour / Cycle','Next Maintenance','Health Status','Operational Status','Current Placement','Firmware','FCC Status','Expired Date','Sertifikat','Maintenance Record Link','Item ID'];
+  const csv=[cols,...DATA.map(d=>cols.map(c=>d[c]||''))].map(r=>r.map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download=`HaloOPS_${new Date().toISOString().slice(0,10)}.csv`;a.click();toast('✓ CSV diexport','g');
+}
+
+// ── UTILS ──────────────────────────────────────────────
+function openM(id){el(id).classList.add('on');}
+function closeM(id){el(id).classList.remove('on');}
+document.addEventListener('click',e=>{if(e.target.classList.contains('mo'))e.target.classList.remove('on');});
+function toast(m,t=''){const te=el('toast');te.textContent=m;te.className='toast'+(t?' '+t:'');te.classList.add('show');setTimeout(()=>te.classList.remove('show'),3000);}
+function se(elem,msg){elem.textContent=msg;elem.style.display='block';}
+function v(id){return el(id)?.value?.trim()||'';}
+function el(id){return document.getElementById(id);}
+function esc(s){return(s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function setL(id,on){const b=el(id);if(!b)return;if(on){b.dataset.orig=b.textContent;b.innerHTML='<span class="spin"></span>Memproses...';b.disabled=true;}else{b.innerHTML=b.dataset.orig||b.innerHTML;b.disabled=false;}}
+
+function setAppsURL(){
+  const current=localStorage.getItem('halo_apps_url')||APPS_URL||'';
+  const url=prompt('Paste Apps Script Web App URL:\n(Deploy → New Deployment → Web App → Copy URL)\n\nKosongkan untuk hapus / pakai sheet langsung:',current);
+  if(url===null)return; // cancelled
+  if(url.trim()){
+    if(!url.includes('script.google.com')){alert('URL tidak valid. Harus dari script.google.com');return;}
+    localStorage.setItem('halo_apps_url',url.trim());
+    toast('✓ Apps Script URL disimpan. Refresh untuk apply.','g');
+  } else {
+    localStorage.removeItem('halo_apps_url');
+    toast('Apps Script URL dihapus — pakai direct sheet','am');
+  }
+  setTimeout(()=>location.reload(),1500);
+}
+</script>
+</body>
+</html>
